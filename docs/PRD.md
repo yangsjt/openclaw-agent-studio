@@ -2,7 +2,7 @@
 
 ## 产品概述
 
-**openclaw-agent-create** 是一个 Claude Code skill，提供标准化的 OpenClaw Agent 创建工作流。它指导用户通过 SOUL.md 驱动架构创建完整的 Agent，包括系统提示词、bootstrap 文件体系、openclaw.json 配置和验证流程。
+**openclaw-agent-studio** 是一个 Claude Code skill，提供标准化的 OpenClaw Agent 创建和优化工作流。它指导用户通过 SOUL.md 驱动架构创建完整的 Agent（包括系统提示词、bootstrap 文件体系、openclaw.json 配置和验证流程），并支持对已有 Agent 进行审计和优化。
 
 **定位**：专注于 Agent 创建流程，与 `openclaw` skill（覆盖运维操作）互补不重叠。
 
@@ -173,6 +173,43 @@ Agent 需要感知两种执行环境：
 - [ ] 对比表覆盖关键维度
 - [ ] 选择指南可指导用户做出决策
 
+### FR8: 现有 Agent 审计与优化
+
+**描述**：提供已有 Agent 的审计流程和优化指南，帮助用户将不符合规范的 Agent 升级到 SOUL.md 驱动架构。
+
+**内容**：
+- 5 步优化工作流（Audit → Analyze → Report → Fix → Verify）
+- 4 维度差距分析检查清单（SOUL.md、系统提示词、Bootstrap 文件、配置）
+- 严重性分级（Critical / High / Medium / Low）
+- 7 种常见优化模式及修复方案
+- 优化报告模板（结构化输出格式）
+- 优化后验证流程
+
+**验收标准**：
+- [ ] 检查清单覆盖 SOUL.md、系统提示词、Bootstrap 文件、配置四个维度
+- [ ] 每个检查项有明确的通过标准和严重性等级
+- [ ] 7 种优化模式可逐条对照执行
+- [ ] 报告模板可直接复制使用
+
+### FR9: 工作区日常维护
+
+**描述**：提供工作区文件的日常维护工作流，包括 Token 预算审计、冗余检测、记忆蒸馏和文件生命周期管理。参考 `openclaw-workspace` 项目的最佳实践。
+
+**内容**：
+- 5 步维护工作流（Token Budget Audit → Redundancy Check → Staleness Review → Memory Distillation → Offload to docs/）
+- Token 预算管理（单文件 20k 上限、总量 ~150k、分级阈值）
+- 冗余审计矩阵（SOUL.md vs AGENTS.md, TOOLS.md vs MEMORY.md 等交叉检查）
+- 记忆蒸馏流程（Heartbeat 自动 + 手动两种模式）
+- 完整工作区文件覆盖（11 个文件类型：新增 HEARTBEAT.md, BOOT.md, MEMORY.md, daily logs, checklists）
+- 常见问题与修复方案
+
+**验收标准**：
+- [ ] Token 预算阈值表可指导文件大小管理
+- [ ] 冗余审计矩阵覆盖主要交叉检查场景
+- [ ] 记忆蒸馏流程可逐步执行
+- [ ] bootstrap-files.md 覆盖全部 11 种文件类型
+- [ ] workspace-maintenance.md 包含可执行的审计命令
+
 ## 架构设计
 
 ### Gateway 兼容模型
@@ -262,7 +299,7 @@ Agent 需要感知两种执行环境：
 ### 安装验收
 
 - [ ] `bash install.sh` 成功创建 symlink
-- [ ] `ls -la ~/.claude/skills/openclaw-agent-create/SKILL.md` 可访问
+- [ ] `ls -la ~/.claude/skills/openclaw-agent-studio/SKILL.md` 可访问
 - [ ] Claude Code 会话中 skill 可被正确识别
 
 ### 功能验收
@@ -272,11 +309,14 @@ Agent 需要感知两种执行环境：
 - [ ] 生成的 SOUL.md 包含全部 4 个标准章节
 - [ ] openclaw.json 配置模板可直接使用
 - [ ] 创建检查清单覆盖完整流程
+- [ ] 请求"优化一个现有的 Agent"时 skill 被激活
+- [ ] 审计检查清单可逐条执行并生成优化报告
+- [ ] 优化模式可指导修复不符合规范的 Agent
 
 ### 内容验收
 
 - [ ] SKILL.md < 150 行
-- [ ] 6 个 reference 文件各自内容完整
+- [ ] 8 个 reference 文件各自内容完整
 - [ ] 所有模板可直接复制使用
 - [ ] 三种创建方式的对比清晰完整
 - [ ] PRD 覆盖所有功能需求和价值点

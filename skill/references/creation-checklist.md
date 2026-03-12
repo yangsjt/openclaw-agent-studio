@@ -168,3 +168,7 @@ openclaw agent "Hello, please introduce yourself and confirm your SOUL.md is loa
 - [ ] Agent responds to test prompt with correct identity
 - [ ] Agent references SOUL.md content in its response
 - [ ] Agent respects configured constraints
+
+## See Also
+
+- [optimization-guide.md](optimization-guide.md) — Audit and optimize existing Agents against the SOUL.md-driven architecture spec

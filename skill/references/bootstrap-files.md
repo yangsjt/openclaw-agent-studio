@@ -4,14 +4,19 @@ OpenClaw injects bootstrap files into the Agent workspace (`agents.defaults.work
 
 ## File Overview
 
-| File | Purpose | Required |
-|------|---------|----------|
-| `SOUL.md` | Persona, boundaries, tone + environment awareness | **Required** |
-| `AGENTS.md` | Operating instructions + persistent "memory" | Recommended |
-| `TOOLS.md` | User-maintained tool usage notes | Recommended |
-| `BOOTSTRAP.md` | One-time first-run ritual (auto-deleted after completion) | Optional |
-| `IDENTITY.md` | Agent name, style, emoji | Optional |
-| `USER.md` | User profile + preferred address | Optional |
+| File | Purpose | Required | Loaded |
+|------|---------|----------|--------|
+| `SOUL.md` | Persona, boundaries, tone + environment awareness | **Required** | Every turn (all agents) |
+| `AGENTS.md` | Operating instructions, boot sequence, checklists | Recommended | Every turn (all agents) |
+| `TOOLS.md` | Environment-specific tool/device notes | Recommended | Every turn (all agents) |
+| `BOOTSTRAP.md` | One-time first-run ritual (auto-deleted) | Optional | New workspaces only |
+| `IDENTITY.md` | Agent name, style, emoji | Optional | Every turn |
+| `USER.md` | User profile + preferred address | Optional | Every turn (all agents) |
+| `HEARTBEAT.md` | Periodic check tasks and health routines | Optional | Heartbeat turns only |
+| `BOOT.md` | Startup actions (requires `hooks.internal.enabled`) | Optional | On gateway startup |
+| `MEMORY.md` | Long-term curated facts and iron-law rules | Optional | Main sessions only (NEVER in groups) |
+| `memory/YYYY-MM-DD.md` | Daily session logs | Optional | Per boot sequence |
+| `checklists/*.md` | Step-by-step ops guides | Optional | On demand |
 
 These files are created by `openclaw setup` and can be manually edited at any time.
 
@@ -202,6 +207,181 @@ Delete this file after all steps are verified.
   - Don't explain basic concepts unless asked
 ```
 
+### HEARTBEAT.md (Optional)
+
+```markdown
+# Heartbeat Tasks
+
+## Periodic Tasks
+- <task to run on each heartbeat>
+
+## Alerts
+- <condition that triggers immediate notification>
+
+## Health Checks
+- <service or system to verify>
+```
+
+**Purpose**: Instructions for periodic heartbeat turns — scheduled check-ins that happen even without a user message. Useful for health checks, queued item processing, scheduled reports.
+
+**Loaded**: On heartbeat turns only (not every turn).
+
+**Design principles**:
+- Each task needs a clear termination condition — avoid open-ended instructions that cause loops
+- Alert conditions should be specific and actionable
+- Reference checklists for multi-step heartbeat tasks
+
+**Anti-patterns**:
+- Instructions that always send a message (creates noise)
+- Open-ended monitoring with no exit condition (causes infinite loops)
+- Duplicating daily task management from AGENTS.md
+
+**Config optimization**: Enable `lightContext: true` in openclaw.json to minimize bootstrap injection on heartbeat turns:
+
+```json5
+{
+  agents: {
+    defaults: {
+      heartbeat: {
+        lightContext: true
+      }
+    }
+  }
+}
+```
+
+OpenClaw auto-skips execution when HEARTBEAT.md contains only empty lines and headers.
+
+---
+
+### BOOT.md (Optional)
+
+```markdown
+# Startup Actions
+
+## Health Checks
+- [ ] Verify <service> is reachable
+- [ ] Confirm <tool> version
+
+## Notifications
+- [ ] Send "online" notification to <channel>
+```
+
+**Purpose**: Actions to run on gateway startup. Requires `hooks.internal.enabled = true` in config.
+
+**Loaded**: On startup only.
+
+**Design principles**:
+- Keep startup actions fast and non-blocking
+- Health check failures should notify, not abort startup
+- Actions requiring user confirmation should be skipped or logged
+
+**Anti-patterns**:
+- Long initialization sequences that delay first response
+- Actions that modify config (use `openclaw config set` manually)
+- Duplicating what AGENTS.md boot sequence handles
+
+---
+
+### MEMORY.md (Main Agent Only)
+
+```markdown
+# Long-Term Memory
+
+## Iron Laws
+1. **<Rule name> (<category>)**: <One-sentence rule with context>
+2. **<Rule name> (<category>)**: <One-sentence rule with context>
+
+## Key Decisions
+- <date>: <decision and rationale>
+
+## Lessons Learned
+- <date>: <lesson from incident or discovery>
+```
+
+**Purpose**: Long-term curated memory — significant events, decisions, lessons learned, and critical rules that must be in context every session.
+
+**Loaded**: Main sessions only. **NEVER in group chats or sub-agent sessions.**
+
+**Security rule**: The boot sequence in AGENTS.md must gate MEMORY.md loading: "Main session only." Private context must not leak to group chats or sub-agents.
+
+**Design principles**:
+- Curated essence, not raw logs — write significant events, decisions, opinions, lessons
+- Short and atomic — one sentence to one short paragraph per entry
+- Actively curate via heartbeat — review daily logs every few days, remove outdated entries
+- Keep under 10,000 chars
+
+**Anti-patterns**:
+- Raw session logs or conversation transcripts (those belong in daily logs)
+- Rules that duplicate content in skill SKILL.md files
+- Task-specific notes (use daily logs or `memory_search`)
+- Loading in groups or sub-agents (NEVER)
+- Growing indefinitely without periodic distillation
+
+---
+
+### memory/YYYY-MM-DD.md (Daily Logs)
+
+```markdown
+# Session Log — YYYY-MM-DD
+
+## Tasks
+- <what was done>
+
+## Decisions
+- <key decision and rationale>
+
+## Notes
+- <anything to remember for next session>
+```
+
+**Purpose**: Session-by-session logs for the current day. Feeds the memory distillation process.
+
+**Loaded**: Per AGENTS.md boot sequence (recommend loading today + yesterday for short-term continuity).
+
+**Design principles**:
+- Append-only during active sessions; summarize at end of day
+- Facts worth keeping long-term should be promoted to MEMORY.md or stored via `memory_search`
+- Archive or delete logs older than 30 days
+
+---
+
+### checklists/*.md (On Demand)
+
+```markdown
+# Checklist: <Operation Name>
+
+## Pre-flight
+- [ ] <Check or verify step>
+
+## Execution
+- [ ] <Action step>
+
+## Verification
+- [ ] Confirm outcome
+- [ ] Log result in memory
+```
+
+**Purpose**: Step-by-step guides for high-risk operations. Referenced from AGENTS.md checklists table.
+
+**Loaded**: On demand (agent reads the file before performing the operation).
+
+**Design principles**:
+- Completable in one reading — no back-and-forth lookups needed
+- Keep under ~50 lines; move narrative to `docs/` if longer
+- Register every checklist in the AGENTS.md checklists table
+
 ## Sub-Agent Bootstrap Context
 
 Note: Sub-agents (spawned via `sessions_spawn`) only receive `AGENTS.md` and `TOOLS.md` in their bootstrap context. They do not receive `SOUL.md`, `IDENTITY.md`, `USER.md`, `HEARTBEAT.md`, or `BOOTSTRAP.md`. Design sub-agent tasks to be self-contained or include necessary context in the task description.
+
+## Token Budget
+
+| Constraint | Limit |
+|-----------|-------|
+| Per file | 20,000 chars (truncated if exceeded) |
+| Total across all bootstrap files | ~150,000 chars |
+| Recommended per file | 10,000–15,000 chars |
+| MEMORY.md recommended max | 10,000 chars |
+
+Files are read on every relevant turn, so token cost is multiplied by conversation length. Keep files lean.
