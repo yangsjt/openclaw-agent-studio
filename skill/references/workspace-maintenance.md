@@ -37,15 +37,37 @@ cat ~/.openclaw/workspace/AGENTS.md \
 
 ## Redundancy Audit
 
-Common sources of duplication across workspace files:
+Common sources of duplication across workspace files under the three-layer architecture:
 
 | Source A | Source B | What to check | Resolution |
 |----------|----------|---------------|------------|
-| SOUL.md (values) | AGENTS.md (rules) | Safety rules in both? | Keep in AGENTS.md, remove from SOUL.md |
+| SOUL.md (personality traits) | system-prompt §1 (role) | Personality description duplicated as role description? | SOUL.md = inner essence; system-prompt = professional title |
+| SOUL.md (values) | system-prompt §4 (constraints) | Values restated as operational rules? | Keep motivation in SOUL.md, derived action in system-prompt |
+| SOUL.md (communication habits) | IDENTITY.md (style) | Communication style duplicated? | SOUL.md = inner habits; IDENTITY.md = external presentation |
+| AGENTS.md (runtime context) | SOUL.md | Environment info still in SOUL.md? | Move to AGENTS.md §1 Runtime Context |
+| AGENTS.md (directives) | system-prompt §2 (workflow) | Same workflow described in both? | Keep overview in system-prompt, specifics in AGENTS.md |
 | TOOLS.md | MEMORY.md | Same tool note or SSH host? | Keep in TOOLS.md |
 | MEMORY.md | Skill SKILL.md | Same rule in both? | Move stable rules to SKILL.md |
 | AGENTS.md | docs/ file | Detailed explanation inline AND in docs? | Remove inline |
-| USER.md | SOUL.md | User preferences duplicated? | Keep in USER.md only |
+| USER.md | SOUL.md | User preferences in SOUL.md? | Keep in USER.md only |
+
+### Three-Layer Separation Check
+
+When auditing, verify the three layers are properly separated:
+
+| Content type | Correct location | Wrong locations |
+|-------------|-----------------|-----------------|
+| Personality traits | SOUL.md §2 | system-prompt, AGENTS.md |
+| Values & principles | SOUL.md §3 | system-prompt §4 (values ≠ constraints) |
+| Communication habits | SOUL.md §4 | IDENTITY.md (habits ≠ style) |
+| Name, emoji, catchphrase | IDENTITY.md | SOUL.md |
+| Node Type, OS, hardware | AGENTS.md §1 | SOUL.md |
+| Paths, tools, toolchain | AGENTS.md §1 | SOUL.md |
+| Professional role/title | system-prompt §1 | SOUL.md §1 (essence ≠ job title) |
+| Workflow procedures | system-prompt §2 | SOUL.md |
+| Output format rules | system-prompt §3 | AGENTS.md |
+| Security/permission rules | system-prompt §4 | SOUL.md §4 (constraints ≠ habits) |
+| Task progress, decisions | MEMORY.md / daily logs | SOUL.md |
 
 ### When to Move Content to docs/
 
@@ -64,11 +86,13 @@ Common sources of duplication across workspace files:
 
 Check each workspace file for outdated content:
 
+- **SOUL.md**: Personality traits that no longer fit the Agent's evolved role; values that conflict with actual behavior
+- **IDENTITY.md**: Name or style that no longer matches the Agent's purpose or user preference
+- **AGENTS.md**: Environment info that changed (hardware, OS version, tool versions); completed tasks in task queue; outdated directives
 - **TOOLS.md**: SSH hosts that no longer exist, old device IDs, deprecated voice settings
 - **USER.md**: Preferences that changed, projects that ended, contacts no longer relevant
 - **MEMORY.md**: Rules about completed tasks, obsolete decisions, context that no longer applies
-- **AGENTS.md**: Checklist entries for operations no longer performed, outdated task queue items
-- **SOUL.md**: Environment info that changed (hardware, OS version, tool versions)
+- **system-prompt**: Constraints that reference removed tools or workflows; role descriptions that no longer match
 
 ## Memory Distillation Workflow
 
@@ -193,12 +217,13 @@ git remote add origin <your-private-repo>
 
 When time is short, audit in this priority order:
 
-1. **MEMORY.md** — most frequent source of bloat; apply "curated essence" standard
-2. **AGENTS.md inline content** — anything more than a one-liner → `docs/` reference
-3. **TOOLS.md cruft** — dead SSH hosts, old device IDs, deprecated settings
-4. **USER.md staleness** — changed preferences, ended projects, old contacts
-5. **Checklist table vs inline** — ensure AGENTS.md has the table, not the steps
-6. **HEARTBEAT.md `lightContext`** — enable in config to reduce heartbeat token cost
+1. **Three-layer separation** — Is personality in SOUL.md? Environment in AGENTS.md? Constraints in system-prompt?
+2. **MEMORY.md** — most frequent source of bloat; apply "curated essence" standard
+3. **AGENTS.md inline content** — anything more than a one-liner → `docs/` reference
+4. **TOOLS.md cruft** — dead SSH hosts, old device IDs, deprecated settings
+5. **USER.md staleness** — changed preferences, ended projects, old contacts
+6. **Checklist table vs inline** — ensure AGENTS.md has the table, not the steps
+7. **HEARTBEAT.md `lightContext`** — enable in config to reduce heartbeat token cost
 
 ## Common Issues
 
@@ -209,3 +234,5 @@ When time is short, audit in this priority order:
 | Boot sequence not loading files | Agent doesn't know about SOUL.md/USER.md content | Check AGENTS.md boot sequence explicitly names each file |
 | MEMORY.md growing too large | Exceeds 10,000 chars | Run memory distillation; move stable rules to skill SKILL.md |
 | Workspace changes not taking effect | Agent uses old content after edits | Restart gateway or start new session |
+| Personality in wrong file | Traits in system-prompt or AGENTS.md | Move to SOUL.md; keep only derived rules elsewhere |
+| Environment info in SOUL.md | Legacy format with Node Type, paths in SOUL.md | Migrate to AGENTS.md §1 Runtime Context (see Pattern 10) |

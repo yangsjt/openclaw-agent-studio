@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Claude Code skill** (`openclaw-agent-studio`) that guides users through creating, optimizing, and maintaining OpenClaw Agents using the SOUL.md-driven architecture. It is a content-only project — no build system, no tests, no runtime code. All files are Markdown or shell scripts.
+This is a **Claude Code skill** (`openclaw-agent-studio`) that guides users through creating, optimizing, and maintaining OpenClaw Agents using the three-layer architecture (SOUL.md inner core + IDENTITY.md expression + system-prompt operations). It is a content-only project — no build system, no tests, no runtime code. All files are Markdown or shell scripts.
 
 **Relationship to `openclaw` skill**: The `openclaw` skill covers operational tasks (install, configure, troubleshoot). This skill covers Agent **creation, optimization, and workspace maintenance** workflows exclusively. They are complementary and must not overlap.
 
@@ -23,6 +23,18 @@ After install, edits to files under `skill/` take effect immediately (symlink).
 
 - **`skill/SKILL.md`** — Main entry point loaded by Claude Code. Must stay under **150 lines** to control token consumption. Contains three workflows (8-step creation + 5-step optimization + 5-step maintenance) overview and links to references.
 - **`skill/references/*.md`** (8 files) — Detailed templates, specs, and checklists loaded on demand. These can be longer.
+
+### Three-Layer Agent Architecture
+
+The skill teaches a three-layer architecture for Agent configuration:
+
+| Layer | File | Defines | Stability |
+|-------|------|---------|-----------|
+| Inner Core | SOUL.md | Personality, values, communication habits | Never changes |
+| External Expression | IDENTITY.md | Name, emoji, style, catchphrase | Per scenario |
+| Operations | system-prompt + AGENTS.md | Professional role, workflows, constraints, runtime context | Per task/deployment |
+
+**Key concept — Motivation-Action Chain**: SOUL.md personality traits (WHY) drive system-prompt operational rules (HOW). Example: "Rigorous" (SOUL) → "Run full test suite before commit" (system-prompt).
 
 ### Source Documents (`docs/`)
 

@@ -1,6 +1,6 @@
 # Agent Optimization Guide
 
-Audit and optimize existing OpenClaw Agents against the SOUL.md-driven architecture spec.
+Audit and optimize existing OpenClaw Agents against the three-layer architecture spec (SOUL.md inner core + IDENTITY.md expression + system-prompt operations).
 
 ## Optimization Workflow Overview
 
@@ -24,6 +24,7 @@ cat ~/.openclaw/workspace-<agent-id>/SOUL.md
 # 3. Read other bootstrap files
 cat ~/.openclaw/workspace-<agent-id>/AGENTS.md
 cat ~/.openclaw/workspace-<agent-id>/TOOLS.md
+cat ~/.openclaw/workspace-<agent-id>/IDENTITY.md
 
 # 4. Read Agent config from openclaw.json
 cat ~/.openclaw/openclaw.json | grep -A 20 '"<agent-id>"'
@@ -39,11 +40,13 @@ cd ~/.openclaw/workspace-<agent-id> && git log --oneline -5
 | Check | Severity | Pass Criteria |
 |-------|----------|---------------|
 | SOUL.md exists | Critical | File present in workspace root |
-| Section 1: Environment Info | High | Node Type, OS, Hardware Note all filled |
-| Section 2: Identity & Goals | High | Role and Current Task defined |
-| Section 3: Path & Tools | High | Root Path matches actual workspace; tools listed |
-| Section 4: Constraints & Memory | Medium | At least 1 constraint; memory entries present if not new |
-| Environment Self-Healing Log | Low | Section exists (can be empty for new agents) |
+| Section 1: Role | High | Inner essence defined (not just a job title) |
+| Section 2: Core Personality | High | 3-5 character traits listed with explanations |
+| Section 3: Values & Principles | High | Decision-making principles defined |
+| Section 4: Communication Habits | Medium | Natural communication patterns described |
+| No environment/path/tool info | Medium | Environment info is in AGENTS.md, not SOUL.md |
+| No operational constraints | Medium | Constraints are in system-prompt §4, not SOUL.md |
+| No memory entries | Medium | Memory is in MEMORY.md, not SOUL.md |
 | File uses uppercase `SOUL.md` | Low | Not `soul.md` or `Soul.md` |
 
 Reference: [soul-md-spec.md](soul-md-spec.md) for the gold-standard template and field definitions.
@@ -52,26 +55,30 @@ Reference: [soul-md-spec.md](soul-md-spec.md) for the gold-standard template and
 
 | Check | Severity | Pass Criteria |
 |-------|----------|---------------|
-| Uses bootstrap loader pattern | Critical | `instruction` contains the 5-step mechanism |
-| Step 1: Detect | High | Environment detection (Gateway vs Node) present |
-| Step 2: Bootstrap | High | SOUL.md loading via `list_files`/`read_file` present |
-| Step 3: Awaken | High | Identity inheritance from SOUL.md described |
-| Step 4: Adapt | Medium | OS path adaptation mentioned |
-| Step 5: Write Back | High | State persistence to SOUL.md mandated |
-| Restriction clause | High | "no operations before SOUL.md confirmation" present |
+| Section 0: Bootstrap preamble present | Critical | 5-step mechanism (Detect/Bootstrap/Awaken/Adapt/WriteBack) |
+| Section 1: Role & Mission | High | Professional identity and task scope defined |
+| Section 2: Workflow & Tools | High | Work procedures and tool usage rules |
+| Section 3: Output Format | Medium | Language, formatting, and style rules |
+| Section 4: Operational Constraints | High | Hard security rules and prohibitions |
+| Restriction clause | High | "No operations before SOUL.md confirmation" present |
+| Motivation-action alignment | Medium | Constraints traceable to SOUL.md personality traits |
+| Step 3 references new SOUL.md structure | Low | "性格、价值观与沟通习惯" not old "身份、任务目标" |
+| Step 5 references MEMORY.md | Low | Write-back targets MEMORY.md, not SOUL.md |
 
-Reference: [system-prompt-template.md](system-prompt-template.md) for the standard bootstrap loader template.
+Reference: [system-prompt-template.md](system-prompt-template.md) for the standard template.
 
 ### Bootstrap Files Audit
 
 | Check | Severity | Pass Criteria |
 |-------|----------|---------------|
 | SOUL.md present | Critical | Required file exists |
-| AGENTS.md present | High | Recommended file exists with directives + task queue |
+| AGENTS.md present | High | Recommended file exists with Runtime Context + directives |
+| AGENTS.md §1 Runtime Context | High | Node Type, OS, Working Directory, Toolchain present |
 | TOOLS.md present | Medium | Recommended file exists listing workspace tools |
+| IDENTITY.md present | Medium | Recommended — name, emoji, style, catchphrase |
 | BOOTSTRAP.md handled | Low | Either present (not yet run) or absent (already run) |
-| IDENTITY.md present | Low | Optional — check if Agent has a defined persona |
 | USER.md present | Low | Optional — check if user preferences are documented |
+| MEMORY.md (not in SOUL.md) | Medium | Memory lives in MEMORY.md, not embedded in SOUL.md |
 
 Reference: [bootstrap-files.md](bootstrap-files.md) for templates and file relationships.
 
@@ -103,6 +110,7 @@ Reference: [bootstrap-files.md](bootstrap-files.md) for templates and file relat
 - **Agent**: <agent-id>
 - **Workspace**: <path>
 - **Audit Date**: <date>
+- **Architecture**: <legacy 4-section / new 3-layer / mixed>
 - **Findings**: X Critical, X High, X Medium, X Low
 
 ## Findings
@@ -129,33 +137,33 @@ Reference: [bootstrap-files.md](bootstrap-files.md) for templates and file relat
 
 ### Pattern 1: Empty or Minimal SOUL.md
 
-**Symptom**: SOUL.md is missing, empty, or has fewer than 4 sections.
+**Symptom**: SOUL.md is missing, empty, or has no personality content.
 
-**Fix**: Generate complete SOUL.md using the [standard template](soul-md-spec.md#standard-template). Fill all 4 sections by inspecting the workspace environment (`uname`, `sw_vers`, tool versions).
+**Fix**: Generate complete SOUL.md using the [standard template](soul-md-spec.md#standard-template) with all 4 sections (Role / Core Personality / Values & Principles / Communication Habits). Gather personality traits from the user or infer from the Agent's purpose.
 
 ### Pattern 2: Hardcoded System Prompt
 
-**Symptom**: `instruction` field contains role-specific instructions directly instead of the bootstrap loader pattern.
+**Symptom**: `instruction` field contains role-specific instructions directly instead of the bootstrap + operation manual pattern.
 
-**Fix**: Replace with the [standard bootstrap loader template](system-prompt-template.md#standard-template). Move role-specific instructions into SOUL.md (Identity & Goals) and AGENTS.md (directives).
+**Fix**: Restructure into 5 sections: bootstrap preamble (standard) + Role & Mission + Workflow & Tools + Output Format + Operational Constraints. See [system-prompt-template.md](system-prompt-template.md#complete-system-prompt-example-coding-agent).
 
 ### Pattern 3: Missing AGENTS.md
 
-**Symptom**: Operating instructions and task context are either absent or embedded in SOUL.md Section 4.
+**Symptom**: Operating instructions and environment context are either absent or embedded in SOUL.md.
 
-**Fix**: Create AGENTS.md with Primary Directives, Task Queue, Response Guidelines, and Memory Log. Migrate operational content out of SOUL.md Constraints section.
+**Fix**: Create AGENTS.md with Runtime Context (§1), Primary Directives, Task Queue, Response Guidelines, and Memory Log. Migrate environment info from SOUL.md if present.
 
 ### Pattern 4: Stale Memory / Context
 
-**Symptom**: SOUL.md Memory entries reference outdated tasks, completed work, or obsolete context.
+**Symptom**: Memory entries reference outdated tasks, completed work, or obsolete context.
 
-**Fix**: Archive old memory entries to a `memory-archive.md` file. Update Current Task in Section 2. Refresh Memory entries to reflect current state.
+**Fix**: Archive old memory entries to MEMORY.md or `memory/archive/`. Update AGENTS.md Task Queue. Refresh Memory Log to reflect current state.
 
 ### Pattern 5: Missing Constraints
 
-**Symptom**: SOUL.md Section 4 has no `[Constraint]` entries, leaving the Agent with no behavioral boundaries.
+**Symptom**: System prompt has no §4 Operational Constraints, leaving the Agent with no behavioral boundaries.
 
-**Fix**: Add role-appropriate constraints. Common constraints by role:
+**Fix**: Add role-appropriate constraints to system-prompt §4. Derive constraints from SOUL.md personality traits using the motivation-action chain. Common constraints by role:
 - **Coding**: "Must run tests before committing", "No direct .env modification"
 - **Ops**: "No destructive commands without confirmation", "Terraform plan before apply"
 - **Social**: "No messages to contacts outside allowlist", "Draft work replies for review"
@@ -164,7 +172,7 @@ Reference: [bootstrap-files.md](bootstrap-files.md) for templates and file relat
 
 **Symptom**: `workspace` in `openclaw.json` does not match the actual directory where bootstrap files live.
 
-**Fix**: Verify actual workspace location. Update either the config path or move files to match. Ensure SOUL.md Root Path (Section 3) is also consistent.
+**Fix**: Verify actual workspace location. Update either the config path or move files to match. Ensure AGENTS.md §1 Working Directory is also consistent.
 
 ### Pattern 7: No Git Recording Layer
 
@@ -174,9 +182,63 @@ Reference: [bootstrap-files.md](bootstrap-files.md) for templates and file relat
 ```bash
 cd ~/.openclaw/workspace-<agent-id>
 git init
-git add SOUL.md AGENTS.md TOOLS.md
+git add SOUL.md AGENTS.md TOOLS.md IDENTITY.md
 git commit -m "chore: initialize agent workspace recording layer"
 ```
+
+### Pattern 8: Personality Content in System Prompt
+
+**Symptom**: System prompt contains personality descriptions, character traits, or value statements that belong in SOUL.md. For example: "你是一个耐心、严谨的助手" directly in the instruction field.
+
+**Fix**: Extract personality content to SOUL.md:
+1. Identify personality traits embedded in the system prompt
+2. Create or update SOUL.md with proper 4-section structure
+3. Keep only the professional role definition in system-prompt §1
+4. Derive operational rules from the extracted personality using the motivation-action chain
+
+**Example**:
+- **Before** (system prompt): "你是一个严谨的开发者，所有代码必须经过测试。"
+- **After** (SOUL.md): "Rigorous — treats every detail as if it matters" → (system-prompt §4): "All code changes must pass the full test suite before commit."
+
+### Pattern 9: Operational Rules in SOUL.md
+
+**Symptom**: SOUL.md contains operational constraints, workflow procedures, or tool usage rules that belong in system-prompt or AGENTS.md. For example: `[Constraint]: Must run tests before committing` in SOUL.md.
+
+**Fix**: Migrate operational content to the correct location:
+1. Move `[Constraint]` entries about operations → system-prompt §4 (Operational Constraints)
+2. Move workflow descriptions → system-prompt §2 (Workflow & Tools)
+3. Move environment/path/tool info → AGENTS.md §1 (Runtime Context)
+4. Move `[Memory]` entries → MEMORY.md or daily logs
+5. Keep only personality-level boundaries in SOUL.md §3 (Values & Principles)
+
+**Example**:
+- **Before** (SOUL.md): `[Constraint]: Do not modify .env files directly`
+- **After** (system-prompt §4): `禁止直接修改 .env 或 .env.local 文件`
+
+### Pattern 10: Legacy SOUL.md Format Migration
+
+**Symptom**: SOUL.md uses the old 4-section format (Environment Info / Identity & Goals / Path & Tools / Constraints & Memory) instead of the new personality-focused format.
+
+**Fix**: Migrate content to the three-layer architecture:
+
+| Old SOUL.md section | Migration target |
+|---------------------|-----------------|
+| §1 Environment Info (Node Type, OS, Hardware) | → AGENTS.md §1 Runtime Context |
+| §2 Identity & Goals → Role (job title) | → system-prompt §1 Role & Mission |
+| §2 Identity & Goals → Current Task | → AGENTS.md §3 Task Queue |
+| §3 Path & Tools | → AGENTS.md §1 Runtime Context |
+| §4 [Constraint] (operational) | → system-prompt §4 Operational Constraints |
+| §4 [Constraint] (personality boundary) | → SOUL.md §3 Values & Principles |
+| §4 [Memory] | → MEMORY.md |
+| Environment Self-Healing Log | → AGENTS.md Environment Self-Healing Log |
+
+Then rewrite SOUL.md with the new 4-section structure focused on personality:
+1. Role → inner essence (not job title)
+2. Core Personality → 3-5 character traits
+3. Values & Principles → decision-making compass
+4. Communication Habits → interaction patterns
+
+> **Backward compatibility**: The bootstrap mechanism does not parse section headings, so old-format SOUL.md files continue to work. Migration improves clarity and enables the motivation-action chain.
 
 ## Step 5: Verify — Post-Optimization
 
@@ -193,13 +255,15 @@ openclaw config validate
 openclaw agents list --bindings
 
 # Functional test
-openclaw agent "Please confirm your identity, current task, and list your constraints."
+openclaw agent "Please confirm your personality, professional role, and list your constraints."
 ```
 
 ### Verification Checklist
 
 - [ ] `openclaw doctor` passes with no errors
-- [ ] Agent responds with identity matching SOUL.md Section 2
-- [ ] Agent references its constraints from SOUL.md Section 4
-- [ ] Agent can read and write to its workspace
+- [ ] Agent responds with personality traits from SOUL.md
+- [ ] Agent identifies its professional role from system-prompt §1
+- [ ] Agent respects constraints from system-prompt §4
+- [ ] Agent displays correct identity from IDENTITY.md (name, style)
+- [ ] AGENTS.md contains Runtime Context with accurate environment info
 - [ ] Git recording layer tracks the optimization changes

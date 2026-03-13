@@ -6,11 +6,11 @@ OpenClaw injects bootstrap files into the Agent workspace (`agents.defaults.work
 
 | File | Purpose | Required | Loaded |
 |------|---------|----------|--------|
-| `SOUL.md` | Persona, boundaries, tone + environment awareness | **Required** | Every turn (all agents) |
-| `AGENTS.md` | Operating instructions, boot sequence, checklists | Recommended | Every turn (all agents) |
+| `SOUL.md` | Inner core — personality, values, communication habits | **Required** | Every turn (all agents) |
+| `AGENTS.md` | Runtime context + operating instructions + task queue | Recommended | Every turn (all agents) |
 | `TOOLS.md` | Environment-specific tool/device notes | Recommended | Every turn (all agents) |
+| `IDENTITY.md` | External expression — name, style, emoji, catchphrase | Recommended | Every turn |
 | `BOOTSTRAP.md` | One-time first-run ritual (auto-deleted) | Optional | New workspaces only |
-| `IDENTITY.md` | Agent name, style, emoji | Optional | Every turn |
 | `USER.md` | User profile + preferred address | Optional | Every turn (all agents) |
 | `HEARTBEAT.md` | Periodic check tasks and health routines | Optional | Heartbeat turns only |
 | `BOOT.md` | Startup actions (requires `hooks.internal.enabled`) | Optional | On gateway startup |
@@ -22,23 +22,36 @@ These files are created by `openclaw setup` and can be manually edited at any ti
 
 To skip bootstrap file injection: `{ agent: { skipBootstrap: true } }`.
 
-## File Relationships
+## Three-Layer Architecture
 
 ```
-SOUL.md (identity + environment)
-  ├── AGENTS.md reads SOUL.md for context
-  ├── TOOLS.md referenced by AGENTS.md instructions
-  ├── IDENTITY.md extends SOUL.md personality
-  └── USER.md informs SOUL.md communication style
-
-BOOTSTRAP.md (one-time setup → deleted after first run)
+SOUL.md (Inner Core — personality, values, communication. Unchanging.)
+  │
+  ├── IDENTITY.md (External Expression — SOUL's outward presentation. Adjustable per scenario.)
+  │
+  ├── AGENTS.md (Runtime Context + Operating Instructions)
+  │     ├── TOOLS.md (tool usage details)
+  │     └── MEMORY.md (long-term memory)
+  │
+  └── system-prompt (Bootstrap + Professional Capability Definition)
+        └── USER.md (user preferences)
 ```
 
-- **SOUL.md** is the foundation — all other files reference or extend it
-- **AGENTS.md** contains operational instructions that assume SOUL.md identity
-- **TOOLS.md** documents tools referenced in AGENTS.md instructions
-- **IDENTITY.md** and **USER.md** are personality/context layers on top of SOUL.md
-- **BOOTSTRAP.md** runs once to initialize the workspace, then self-deletes
+### Layer Responsibilities
+
+| Layer | File(s) | Defines | Changes when... |
+|-------|---------|---------|-----------------|
+| **Inner Core** | SOUL.md | WHO the Agent is — personality, values, habits | Never (the soul is constant) |
+| **External Expression** | IDENTITY.md | How others see the Agent — name, emoji, style | Scenario changes (dev vs. support mode) |
+| **Operations** | AGENTS.md + system-prompt | WHAT the Agent does and HOW | Task, environment, or deployment changes |
+
+### Key Relationships
+
+- **SOUL.md** is the foundation — defines the Agent's character and decision-making compass
+- **IDENTITY.md** extends SOUL.md — same personality expressed through different names, styles, and catchphrases
+- **AGENTS.md** contains runtime context (environment, tools, paths) and operational instructions
+- **system-prompt** bootstraps the Agent and defines professional role, workflows, and constraints
+- **SOUL.md drives system-prompt** via the motivation-action chain (personality traits → operational rules)
 
 ## File Templates
 
@@ -51,50 +64,73 @@ See [soul-md-spec.md](soul-md-spec.md) for the full specification and examples.
 ```markdown
 # Agent Operating Instructions
 
-## Primary Directives
+## 1. Runtime Context
+- **Node Type**: <Local Gateway / Remote Node>
+- **OS**: <e.g., macOS Sequoia 15.3 / Ubuntu 24.04>
+- **Working Directory**: <absolute path to workspace>
+- **Toolchain**: <e.g., git, nodejs v22, bun 1.2, docker>
+- **Hardware Note**: <e.g., M4 Pro, 64GB RAM>
+
+## 2. Primary Directives
 - <core behavior directive 1>
 - <core behavior directive 2>
 
-## Task Queue
+## 3. Task Queue
 1. <current priority task>
 2. <next task>
 
-## Response Guidelines
+## 4. Response Guidelines
 - <how to format responses>
 - <when to ask for clarification>
 - <escalation rules>
 
-## Memory Log
+## 5. Memory Log
 - <date>: <key decision or progress note>
 - <date>: <important context for future sessions>
+
+### Environment Self-Healing Log
+- <date>: <discovered issue and resolution>
 ```
 
-**Purpose**: AGENTS.md serves as the Agent's "operating manual" — it tells the Agent what to do and how to do it. The Memory Log section acts as persistent memory across sessions.
+**Purpose**: AGENTS.md serves as the Agent's "operating manual on the ground" — it provides runtime context (where am I, what tools do I have) and operational instructions (what to do, how to do it). The Memory Log section acts as persistent memory across sessions.
+
+**What moved here**: Runtime Context (§1) now contains environment information that was previously in SOUL.md (Node Type, OS, hardware, paths, tools). This separation ensures environment-specific details change with deployment, while personality remains constant.
 
 **Example** (Coding Agent):
 
 ```markdown
 # Agent Operating Instructions
 
-## Primary Directives
+## 1. Runtime Context
+- **Node Type**: Remote Node
+- **OS**: macOS Sequoia 15.3
+- **Working Directory**: /Users/dev/workspaces/myapp
+- **Toolchain**: git, nodejs v22, bun 1.2, docker, postgresql 16
+- **Hardware Note**: M4 Pro, 64GB RAM, 1TB SSD
+
+## 2. Primary Directives
 - Follow TDD: write tests first, then implement
 - Use conventional commits for all git operations
 - Run linter and type checker before committing
 
-## Task Queue
+## 3. Task Queue
 1. Complete user authentication module (OAuth2 + JWT)
 2. Add rate limiting to API endpoints
 3. Write integration tests for payment flow
 
-## Response Guidelines
+## 4. Response Guidelines
 - When given a bug report, reproduce first, then fix
 - For architectural decisions, present 2-3 options with trade-offs
 - Commit only when explicitly asked
 
-## Memory Log
+## 5. Memory Log
 - 2026-03-01: Decided on Drizzle ORM over Prisma for type safety
 - 2026-03-05: Auth flow uses PKCE code flow, approved by user
 - 2026-03-10: Database migration for users table completed
+
+### Environment Self-Healing Log
+- 2026-03-01: bun not found on initial setup, installed via `curl -fsSL https://bun.sh/install | bash`
+- 2026-03-05: postgresql service not running, started with `brew services start postgresql@16`
 ```
 
 ### TOOLS.md (Recommended)
@@ -136,36 +172,20 @@ See [soul-md-spec.md](soul-md-spec.md) for the full specification and examples.
 - **Notes**: Custom alias, wrapper around ripgrep with project-specific ignores.
 ```
 
-### BOOTSTRAP.md (Optional)
-
-```markdown
-# First-Run Bootstrap
-
-Complete these setup steps on first activation, then delete this file.
-
-## Steps
-1. [ ] Verify all tools listed in TOOLS.md are installed
-2. [ ] Run `git status` to confirm workspace is clean
-3. [ ] Read SOUL.md and confirm environment matches
-4. [ ] <project-specific setup step>
-5. [ ] <project-specific setup step>
-
-## On Completion
-Delete this file after all steps are verified.
-```
-
-**Purpose**: BOOTSTRAP.md defines a one-time setup ritual. The Agent executes these steps on its first run, then deletes the file. This is useful for initial workspace verification, dependency installation, or configuration checks.
-
-### IDENTITY.md (Optional)
+### IDENTITY.md (Recommended)
 
 ```markdown
 # Agent Identity
 
 - **Name**: <display name>
 - **Emoji**: <representative emoji>
-- **Style**: <communication style description>
-- **Catchphrase**: <optional signature phrase>
+- **Style**: <external presentation style, e.g., professional and concise, uses Simplified Chinese>
+- **Catchphrase**: <signature phrase>
 ```
+
+**Purpose**: IDENTITY.md is the **external expression layer** of SOUL.md — it defines how the Agent presents itself to others. The same SOUL (personality core) can be paired with different IDENTITYs depending on the scenario (e.g., professional style for dev work, warm style for customer support).
+
+**Relationship to SOUL.md**: SOUL.md defines inner traits ("patient, rigorous, curious"); IDENTITY.md defines outward expression ("named Atlas, uses technical language, catchphrase: Let me map that out"). Think of it as the same person wearing different outfits.
 
 **Example**:
 
@@ -177,6 +197,26 @@ Delete this file after all steps are verified.
 - **Style**: Professional but approachable. Uses technical terms precisely but explains them when context suggests the audience may not be familiar.
 - **Catchphrase**: "Let me map that out for you."
 ```
+
+### BOOTSTRAP.md (Optional)
+
+```markdown
+# First-Run Bootstrap
+
+Complete these setup steps on first activation, then delete this file.
+
+## Steps
+1. [ ] Verify all tools listed in AGENTS.md Runtime Context are installed
+2. [ ] Run `git status` to confirm workspace is clean
+3. [ ] Read SOUL.md and confirm personality is internalized
+4. [ ] <project-specific setup step>
+5. [ ] <project-specific setup step>
+
+## On Completion
+Delete this file after all steps are verified.
+```
+
+**Purpose**: BOOTSTRAP.md defines a one-time setup ritual. The Agent executes these steps on its first run, then deletes the file. This is useful for initial workspace verification, dependency installation, or configuration checks.
 
 ### USER.md (Optional)
 

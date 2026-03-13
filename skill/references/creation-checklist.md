@@ -13,7 +13,31 @@ Before creating an Agent, collect the following:
 | Model | Primary model + fallbacks | `anthropic/claude-sonnet-4-5` |
 | Channel Binding | Which channel(s) route to this Agent | Telegram `coding` account |
 | Permissions | Tools the Agent needs | `read_file`, `write_file`, `execute_command`, `list_files` |
-| Role | Agent's identity for SOUL.md | Senior Fullstack Developer |
+| **Inner Essence** | Agent's core identity (for SOUL.md §1 Role) | "A meticulous craftsman" |
+| **Personality Traits** | 3-5 character traits (for SOUL.md §2) | Patient, rigorous, curious |
+| **Core Values** | Decision-making principles (for SOUL.md §3) | Safety first, simplicity over cleverness |
+| **Communication Habits** | How the Agent naturally communicates (for SOUL.md §4) | Uses analogies, asks before assuming |
+| **Professional Title** | Job title for system-prompt §1 | Senior Fullstack Developer |
+| **Name & Style** | External expression (for IDENTITY.md) | Name: Atlas, Style: Professional but approachable |
+
+### Personality Collection Tips
+
+When gathering personality information, use these prompts:
+
+1. **Role**: "If this Agent were a person, how would they describe themselves in one sentence — not their job, but their nature?"
+2. **Personality**: "What 3-5 adjectives best describe this Agent's temperament?"
+3. **Values**: "When faced with a trade-off (speed vs. quality, convenience vs. security), what does this Agent prioritize?"
+4. **Communication**: "How does this Agent naturally explain things — with examples? analogies? step-by-step?"
+
+### Motivation-Action Derivation
+
+After collecting personality, derive system-prompt constraints using the motivation-action chain:
+
+| Personality trait (SOUL.md) | → Operational rule (system-prompt) |
+|---|---|
+| "Rigorous — treats edge cases as first-class" | → "Write tests for error paths before happy paths" |
+| "Safety first — never trade security for convenience" | → "Schema-validate all input; use parameterized queries" |
+| "Patient — never rushes decisions" | → "Read existing code context before making changes" |
 
 ## Creation Checklist
 
@@ -26,13 +50,23 @@ Before creating an Agent, collect the following:
   ```bash
   mkdir -p ~/.openclaw/workspace-<agent-id>
   ```
-- [ ] **Write SOUL.md** (all 4 sections filled)
-  - Environment Info (Node Type, OS, Hardware)
-  - Identity & Goals (Role, Current Task)
-  - Path & Tools (Root Path, Pre-installed Tools)
-  - Constraints & Memory (initial constraints)
-- [ ] **Write AGENTS.md** (operating instructions + task queue)
-- [ ] **Write system prompt** using the bootstrap loader template
+- [ ] **Write SOUL.md** (inner core — all 4 sections filled)
+  - Role (inner essence, not job title)
+  - Core Personality (3-5 character traits)
+  - Values & Principles (decision-making compass)
+  - Communication Habits (natural interaction patterns)
+- [ ] **Write IDENTITY.md** (external expression)
+  - Name, Emoji, Style, Catchphrase
+- [ ] **Write AGENTS.md** (runtime context + operating instructions + task queue)
+  - Runtime Context (Node Type, OS, Working Directory, Toolchain)
+  - Operation Workflow (task queue, directives)
+  - Response Guidelines
+- [ ] **Write system prompt** using the operation manual template
+  - Section 0: Bootstrap preamble (standard)
+  - Section 1: Role & Mission (professional identity)
+  - Section 2: Workflow & Tools (procedures)
+  - Section 3: Output Format (language, formatting)
+  - Section 4: Operational Constraints (hard rules)
 
 ### Configuration
 
@@ -165,10 +199,11 @@ openclaw agent "Hello, please introduce yourself and confirm your SOUL.md is loa
 - [ ] `openclaw doctor` passes with no errors
 - [ ] Agent appears in `openclaw agents list`
 - [ ] Bindings are correct in `openclaw agents list --bindings`
-- [ ] Agent responds to test prompt with correct identity
-- [ ] Agent references SOUL.md content in its response
-- [ ] Agent respects configured constraints
+- [ ] Agent responds to test prompt with correct personality (from SOUL.md)
+- [ ] Agent uses correct professional identity (from system-prompt §1)
+- [ ] Agent respects operational constraints (from system-prompt §4)
+- [ ] Agent displays correct name and style (from IDENTITY.md)
 
 ## See Also
 
-- [optimization-guide.md](optimization-guide.md) — Audit and optimize existing Agents against the SOUL.md-driven architecture spec
+- [optimization-guide.md](optimization-guide.md) — Audit and optimize existing Agents against the three-layer architecture spec

@@ -1,3 +1,5 @@
+> **Note (2026-03)**: The SOUL.md and system-prompt specifications in this PRD reflect the original design. The authoritative, updated specifications are in `skill/references/soul-md-spec.md` (new 4-section personality-focused format) and `skill/references/system-prompt-template.md` (new 5-section operation manual format). See also `docs/OpenClaw Agent 创建与系统提示词规范.md` for the updated Chinese source document.
+
 # PRD: OpenClaw Agent Creation Skill
 
 ## 产品概述

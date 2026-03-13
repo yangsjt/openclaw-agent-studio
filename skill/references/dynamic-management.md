@@ -15,10 +15,15 @@ Agent workspace files and SOUL.md are always stored on the **current execution n
 
 ## Core Principle: Configuration as File
 
-The Agent's "soul" is decomposed into physical files in the workspace directory:
+The Agent's identity and configuration are decomposed into physical files in the workspace directory using a three-layer architecture:
 
+- **SOUL.md (Inner Core)**: Personality, values, and communication habits — constant across all environments
+- **IDENTITY.md (External Expression)**: Name, emoji, style — adjustable per scenario
+- **AGENTS.md + system-prompt (Operations)**: Runtime context, workflows, constraints — changes per deployment
+
+Key properties:
 - **Physical persistence**: Configuration moves with the workspace. As long as disk is intact, settings are never lost
-- **Environment self-adaptation**: On startup, the Agent reads SOUL.md to determine if it's on a local Gateway or remote Node, then loads the appropriate environment variables
+- **Environment self-adaptation**: On startup, the Agent reads AGENTS.md §1 Runtime Context to determine its environment, and SOUL.md to internalize its personality
 
 ## Three Maintenance Layers
 
@@ -28,11 +33,11 @@ The Agent's "soul" is decomposed into physical files in the workspace directory:
 - **Content**: Bootstrap prompt (system prompt), Node selection strategy
 - **Local execution note**: Ensure the Gateway process has sufficient disk read/write permissions
 
-### B. Node Layer: Soul Files (SOUL.md)
+### B. Node Layer: Workspace Files (SOUL.md + AGENTS.md + IDENTITY.md)
 
 - **Scope**: Workspace root directory files
-- **Content**: Role definition, node-specific paths (e.g., `/home` on Linux vs `/Users` on macOS)
-- **Updates**: Agent writes progress to SOUL.md Memory section at task milestones
+- **Content**: SOUL.md (personality core), AGENTS.md (runtime context, operating instructions, node-specific paths), IDENTITY.md (external presentation)
+- **Updates**: Agent writes progress to MEMORY.md or daily logs at task milestones
 
 ### C. Recording Layer: Execution History (Git)
 
@@ -51,17 +56,18 @@ The Agent's "soul" is decomposed into physical files in the workspace directory:
 
 ### Persistent Memory (File-based)
 
-- Maintained on the Node's disk via SOUL.md
+- Maintained on the Node's disk via MEMORY.md and daily logs (`memory/YYYY-MM-DD.md`)
 - Survives across sessions
-- Agent writes key progress to SOUL.md's `[Memory]` entries
+- Agent writes key progress to MEMORY.md (curated long-term) or daily logs (session-level)
 - Enables "checkpoint resume" — Agent can pick up where it left off
 
 ### Best Practice
 
 Combine both memory types:
 1. Use Context Memory for within-session state
-2. Write critical milestones to SOUL.md `[Memory]` entries
-3. At session end, ensure important context is persisted to SOUL.md
+2. Write session progress to daily logs (`memory/YYYY-MM-DD.md`)
+3. Distill significant learnings into MEMORY.md periodically
+4. At session end, ensure important context is persisted to the appropriate memory file
 
 ## Cross-Node Migration
 
@@ -80,16 +86,20 @@ rsync -avz ~/.openclaw/workspace-<agent-id>/ nodeB:~/.openclaw/workspace-<agent-
 # On Node B: git clone / git pull
 ```
 
-### Step 2: Update SOUL.md
+### Step 2: Update AGENTS.md Runtime Context
 
-Edit SOUL.md on Node B to reflect the new environment:
+Edit AGENTS.md on Node B to reflect the new environment:
 
 ```markdown
-## 1. Environment Info
+## 1. Runtime Context
 - **Node Type**: Remote Node          # Updated
 - **OS**: Ubuntu 24.04 LTS            # Updated for new node
+- **Working Directory**: /home/ops/workspace  # Updated
+- **Toolchain**: kubectl, helm, docker, terraform  # Verified
 - **Hardware Note**: 8-core Xeon, 32GB RAM  # Updated
 ```
+
+> **Note**: SOUL.md (personality core) does not need updating during migration — the Agent's personality is environment-independent.
 
 ### Step 3: Update Node Selector
 
@@ -155,13 +165,13 @@ openclaw config set tools.exec.security allowlist
 A: Check that the Node selector tags match, and confirm the Node shows as `Online` in `openclaw nodes status`. If connecting via SSH tunnel, verify the tunnel is active and the `OPENCLAW_GATEWAY_TOKEN` is correct.
 
 **Q: Do I still need SOUL.md if I only run locally on the Gateway?**
-A: Yes. SOUL.md helps the Agent distinguish between system-global configuration and project-specific configuration. It also works around the limitation that dynamic Agents cannot directly access the system prompt at runtime.
+A: Yes. SOUL.md defines the Agent's personality core — its character traits, values, and communication style. Without it, the Agent has no consistent personality. Runtime environment info goes in AGENTS.md §1 Runtime Context.
 
 **Q: How do I implement cross-node migration?**
-A: Copy the entire workspace folder (containing SOUL.md) from Machine A to Machine B, update SOUL.md's environment section for the new node, and update the Node selector in `openclaw.json` to point to Machine B.
+A: Copy the entire workspace folder from Machine A to Machine B, update AGENTS.md §1 Runtime Context for the new node's environment, and update the Node selector in `openclaw.json` to point to Machine B. SOUL.md does not need updating — personality is environment-independent.
 
 **Q: What happens to session history during migration?**
-A: Session history (Context Memory) stays on the Gateway. Only workspace files (Persistent Memory / SOUL.md) are migrated. The Agent picks up context from SOUL.md's Memory entries on the new node.
+A: Session history (Context Memory) stays on the Gateway. Only workspace files (SOUL.md, AGENTS.md, IDENTITY.md, MEMORY.md, etc.) are migrated. The Agent picks up context from MEMORY.md and daily logs on the new node.
 
 **Q: Can multiple Agents share the same Node?**
 A: Yes, but each Agent should have its own workspace directory. The Node Selector routes exec commands to the node; workspace isolation is handled at the directory level.
