@@ -10,7 +10,7 @@ OpenClaw injects bootstrap files into the Agent workspace (`agents.defaults.work
 | `AGENTS.md` | Runtime context + operating instructions + task queue | Recommended | Every turn (all agents) |
 | `TOOLS.md` | Environment-specific tool/device notes | Recommended | Every turn (all agents) |
 | `IDENTITY.md` | External expression — name, style, emoji, catchphrase | Recommended | Every turn |
-| `BOOTSTRAP.md` | One-time first-run ritual (auto-deleted) | Optional | New workspaces only |
+| `BOOTSTRAP.md` | One-time first-run ritual (auto-deleted) | Recommended | New workspaces only |
 | `USER.md` | User profile + preferred address | Optional | Every turn (all agents) |
 | `HEARTBEAT.md` | Periodic check tasks and health routines | Optional | Heartbeat turns only |
 | `BOOT.md` | Startup actions (requires `hooks.internal.enabled`) | Optional | On gateway startup |
@@ -198,7 +198,7 @@ See [soul-md-spec.md](soul-md-spec.md) for the full specification and examples.
 - **Catchphrase**: "Let me map that out for you."
 ```
 
-### BOOTSTRAP.md (Optional)
+### BOOTSTRAP.md (Recommended)
 
 ```markdown
 # First-Run Bootstrap

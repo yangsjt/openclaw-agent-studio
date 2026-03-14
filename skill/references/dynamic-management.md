@@ -86,7 +86,46 @@ rsync -avz ~/.openclaw/workspace-<agent-id>/ nodeB:~/.openclaw/workspace-<agent-
 # On Node B: git clone / git pull
 ```
 
-### Step 2: Update AGENTS.md Runtime Context
+### Step 2: Create Migration BOOTSTRAP.md
+
+Create a migration-specific BOOTSTRAP.md on Node B to verify the new environment before resuming operations:
+
+```markdown
+# Migration Verification Bootstrap
+
+## Context
+This Agent is being migrated from Node A to Node B.
+This bootstrap verifies that the new environment is correctly
+configured before the Agent resumes normal operations.
+
+## Steps
+
+### 1. Detect — Verify Workspace Integrity
+- Confirm all bootstrap files transferred successfully (SOUL.md, AGENTS.md, IDENTITY.md, TOOLS.md, MEMORY.md)
+- Check git history is intact (if workspace uses git)
+- Verify no file corruption from transfer
+
+### 2. Validate — New Node Environment
+- Verify required tools are installed on Node B (check AGENTS.md §1 Toolchain list)
+- Confirm working directory paths are valid on Node B
+- Test tool accessibility (e.g., `which kubectl`, `docker --version`)
+
+### 3. Update — Runtime Context
+- Update AGENTS.md §1 Runtime Context for Node B (Node Type, OS, Working Directory, Hardware)
+- Verify SOUL.md is unchanged (personality is environment-independent)
+
+### 4. Test — Functional Verification
+- Run `openclaw doctor` on Node B
+- Send a test prompt to confirm Agent responds with correct personality and role
+
+### 5. Complete — Delete and Record
+- Delete this BOOTSTRAP.md file
+- Git commit: "chore: complete migration bootstrap from <node-a> to <node-b>"
+```
+
+> See [optimization-guide.md Pattern 11](optimization-guide.md#pattern-11-retrofit-bootstrapmd-for-established-agents) for the general retrofit pattern.
+
+### Step 3: Update AGENTS.md Runtime Context
 
 Edit AGENTS.md on Node B to reflect the new environment:
 
@@ -101,7 +140,7 @@ Edit AGENTS.md on Node B to reflect the new environment:
 
 > **Note**: SOUL.md (personality core) does not need updating during migration — the Agent's personality is environment-independent.
 
-### Step 3: Update Node Selector
+### Step 4: Update Node Selector
 
 In `openclaw.json`, update the Agent's Node selector to point to Node B:
 
@@ -120,7 +159,7 @@ In `openclaw.json`, update the Agent's Node selector to point to Node B:
 }
 ```
 
-### Step 4: Verify
+### Step 5: Verify
 
 ```bash
 openclaw nodes status                  # Confirm Node B is online
@@ -168,7 +207,7 @@ A: Check that the Node selector tags match, and confirm the Node shows as `Onlin
 A: Yes. SOUL.md defines the Agent's personality core — its character traits, values, and communication style. Without it, the Agent has no consistent personality. Runtime environment info goes in AGENTS.md §1 Runtime Context.
 
 **Q: How do I implement cross-node migration?**
-A: Copy the entire workspace folder from Machine A to Machine B, update AGENTS.md §1 Runtime Context for the new node's environment, and update the Node selector in `openclaw.json` to point to Machine B. SOUL.md does not need updating — personality is environment-independent.
+A: Copy the entire workspace folder from Machine A to Machine B, create a Migration Verification BOOTSTRAP.md to validate the new environment (tools, paths, workspace integrity), update AGENTS.md §1 Runtime Context for the new node's environment, and update the Node selector in `openclaw.json` to point to Machine B. SOUL.md does not need updating — personality is environment-independent. See the Cross-Node Migration section above for the full 5-step process.
 
 **Q: What happens to session history during migration?**
 A: Session history (Context Memory) stays on the Gateway. Only workspace files (SOUL.md, AGENTS.md, IDENTITY.md, MEMORY.md, etc.) are migrated. The Agent picks up context from MEMORY.md and daily logs on the new node.

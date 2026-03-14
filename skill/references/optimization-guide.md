@@ -76,7 +76,7 @@ Reference: [system-prompt-template.md](system-prompt-template.md) for the standa
 | AGENTS.md §1 Runtime Context | High | Node Type, OS, Working Directory, Toolchain present |
 | TOOLS.md present | Medium | Recommended file exists listing workspace tools |
 | IDENTITY.md present | Medium | Recommended — name, emoji, style, catchphrase |
-| BOOTSTRAP.md handled | Low | Either present (not yet run) or absent (already run) |
+| BOOTSTRAP.md handled | Medium | Present (not yet run), absent with git history showing prior creation, or retrofit applied per Pattern 11 |
 | USER.md present | Low | Optional — check if user preferences are documented |
 | MEMORY.md (not in SOUL.md) | Medium | Memory lives in MEMORY.md, not embedded in SOUL.md |
 
@@ -239,6 +239,55 @@ Then rewrite SOUL.md with the new 4-section structure focused on personality:
 4. Communication Habits → interaction patterns
 
 > **Backward compatibility**: The bootstrap mechanism does not parse section headings, so old-format SOUL.md files continue to work. Migration improves clarity and enables the motivation-action chain.
+
+### Pattern 11: Retrofit BOOTSTRAP.md for Established Agents
+
+**Symptom**: Agent was created before BOOTSTRAP.md became Recommended. No BOOTSTRAP.md exists and no git history of prior creation. This also applies to Agents undergoing cross-node migration or major environment changes.
+
+**When to apply**:
+- Agent predates BOOTSTRAP.md Recommended status and has never had one
+- Agent is being migrated to a different Node (see [dynamic-management.md](dynamic-management.md#cross-node-migration))
+- Agent's execution environment has changed significantly (OS upgrade, toolchain swap)
+
+**Fix**: Create an **upgrade verification** variant of BOOTSTRAP.md (distinct from the first-run version used for new Agents):
+
+```markdown
+# Upgrade Verification Bootstrap
+
+## Context
+This Agent was created before BOOTSTRAP.md became Recommended.
+This bootstrap performs a one-time upgrade verification to confirm
+workspace integrity and align with current best practices.
+
+## Steps
+
+### 1. Detect — Verify Workspace Structure
+- Confirm SOUL.md exists and uses the 4-section personality format
+- Confirm AGENTS.md exists with Runtime Context (§1)
+- List all bootstrap files present; flag any missing Recommended files
+
+### 2. Validate — Environment Consistency
+- Read AGENTS.md §1 Runtime Context
+- Verify Node Type, OS, Working Directory, and Toolchain match actual environment
+- Flag any stale or incorrect entries
+
+### 3. Check — SOUL.md Format Compliance
+- Verify 4-section structure: Role / Core Personality / Values & Principles / Communication Habits
+- Flag any misplaced content (environment info, operational constraints, memory entries)
+- If legacy format detected, recommend Pattern 10 migration
+
+### 4. Align — Motivation-Action Chain
+- Verify system-prompt §4 constraints are traceable to SOUL.md personality traits
+- Flag orphaned constraints (no personality basis) or unused traits (no operational rule)
+
+### 5. Complete — Delete and Record
+- Delete this BOOTSTRAP.md file
+- Git commit: "chore: complete upgrade verification bootstrap for <agent-id>"
+```
+
+> **Audit trail**: The git commit message serves as proof that the retrofit was applied, satisfying the Bootstrap Files Audit check (this pattern's pass criteria).
+
+> **Cross-node migration**: For migration scenarios, use the Migration Verification Bootstrap variant described in [dynamic-management.md](dynamic-management.md#cross-node-migration) instead.
 
 ## Step 5: Verify — Post-Optimization
 

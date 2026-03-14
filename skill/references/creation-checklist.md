@@ -61,6 +61,11 @@ After collecting personality, derive system-prompt constraints using the motivat
   - Runtime Context (Node Type, OS, Working Directory, Toolchain)
   - Operation Workflow (task queue, directives)
   - Response Guidelines
+- [ ] **Write BOOTSTRAP.md** (first-run ritual — auto-deleted after execution)
+  - Verify tools from AGENTS.md Runtime Context are installed
+  - Confirm workspace is clean (`git status`)
+  - Read SOUL.md and confirm personality internalized
+  - Add project-specific setup steps
 - [ ] **Write system prompt** using the operation manual template
   - Section 0: Bootstrap preamble (standard)
   - Section 1: Role & Mission (professional identity)

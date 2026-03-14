@@ -72,7 +72,7 @@ Create the complete bootstrap file set:
 | AGENTS.md | Recommended | Runtime context + operating instructions + memory |
 | TOOLS.md | Recommended | Tool usage notes |
 | IDENTITY.md | Recommended | External expression — name, style, emoji, catchphrase |
-| BOOTSTRAP.md | Optional | First-run ritual (auto-deleted) |
+| BOOTSTRAP.md | Recommended | First-run ritual (auto-deleted) |
 | USER.md | Optional | User profile + preferences |
 
 See [bootstrap-files.md](references/bootstrap-files.md) for templates.
@@ -124,7 +124,7 @@ Generate a structured findings report with severity levels:
 
 ### 4. Fix
 
-Apply fixes using the 10 common optimization patterns (including legacy SOUL.md migration). See [optimization-guide.md](references/optimization-guide.md).
+Apply fixes using the 11 common optimization patterns (including legacy SOUL.md migration and BOOTSTRAP.md retrofit). See [optimization-guide.md](references/optimization-guide.md).
 
 ### 5. Verify
 
