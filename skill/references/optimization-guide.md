@@ -62,6 +62,8 @@ Reference: [soul-md-spec.md](soul-md-spec.md) for the gold-standard template and
 | Section 4: Operational Constraints | High | Hard security rules and prohibitions |
 | Restriction clause | High | "No operations before SOUL.md confirmation" present |
 | Motivation-action alignment | Medium | Constraints traceable to SOUL.md personality traits |
+| Operations coverage in AGENTS.md | High | All 5 system-prompt sections have corresponding content in AGENTS.md |
+| No redundancy between files | Medium | system-prompt content not duplicated between AGENTS.md, SOUL.md, TOOLS.md |
 | Step 3 references new SOUL.md structure | Low | "性格、价值观与沟通习惯" not old "身份、任务目标" |
 | Step 5 references MEMORY.md | Low | Write-back targets MEMORY.md, not SOUL.md |
 
@@ -205,8 +207,8 @@ git commit -m "chore: initialize agent workspace recording layer"
 **Symptom**: SOUL.md contains operational constraints, workflow procedures, or tool usage rules that belong in system-prompt or AGENTS.md. For example: `[Constraint]: Must run tests before committing` in SOUL.md.
 
 **Fix**: Migrate operational content to the correct location:
-1. Move `[Constraint]` entries about operations → system-prompt §4 (Operational Constraints)
-2. Move workflow descriptions → system-prompt §2 (Workflow & Tools)
+1. Move `[Constraint]` entries about operations → AGENTS.md Safety section
+2. Move workflow descriptions → AGENTS.md + TOOLS.md
 3. Move environment/path/tool info → AGENTS.md §1 (Runtime Context)
 4. Move `[Memory]` entries → MEMORY.md or daily logs
 5. Keep only personality-level boundaries in SOUL.md §3 (Values & Principles)
@@ -288,6 +290,36 @@ workspace integrity and align with current best practices.
 > **Audit trail**: The git commit message serves as proof that the retrofit was applied, satisfying the Bootstrap Files Audit check (this pattern's pass criteria).
 
 > **Cross-node migration**: For migration scenarios, use the Migration Verification Bootstrap variant described in [dynamic-management.md](dynamic-management.md#cross-node-migration) instead.
+
+### Pattern 12: System Prompt Content Not Transferred to AGENTS.md
+
+**Symptom**: `agent/system-prompt.md` exists as a design document but its content
+has not been (fully) transferred into AGENTS.md. The Agent is missing operational
+guidance at runtime.
+
+**Diagnosis**:
+1. Read `agent/system-prompt.md` — identify its 5 sections
+2. Read workspace `AGENTS.md` — check which sections are covered
+3. Generate a coverage matrix:
+
+| system-prompt Section | In AGENTS.md? | In TOOLS.md? | Missing? |
+|----------------------|---------------|--------------|----------|
+| §0 Bootstrap Preamble | Check §1 Boot Sequence | — | ? |
+| §1 Role & Mission | Check §2 Primary Directives | — | ? |
+| §2 Workflow & Tools | Check §3 Task Queue | Check tool list | ? |
+| §3 Output Format | Check §4 Response Guidelines | — | ? |
+| §4 Constraints | Check §7 Safety | — | ? |
+
+**Fix**:
+1. Transfer missing sections from system-prompt.md into AGENTS.md
+2. Move tool-specific details to TOOLS.md
+3. Remove any duplicated content between files
+4. Keep system-prompt.md in `agent/` for version control reference
+
+**Also check for redundancy**:
+- SOUL.md containing operational constraints → move to AGENTS.md
+- AGENTS.md duplicating SOUL.md personality content → remove from AGENTS.md
+- system-prompt content in both SOUL.md and AGENTS.md → keep only in AGENTS.md
 
 ## Step 5: Verify — Post-Optimization
 

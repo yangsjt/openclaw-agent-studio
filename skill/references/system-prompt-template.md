@@ -2,6 +2,12 @@
 
 The system prompt (`instruction` field) serves as the Agent's **operation manual** — it combines the bootstrap loader mechanism with professional role definition, workflows, output format, and operational constraints. It answers "what job do I do and how do I do it?"
 
+> **Runtime Note**: `system-prompt.md` is a **design artifact** — OpenClaw does NOT
+> auto-load it. The 8 bootstrap files OpenClaw injects are: AGENTS.md, SOUL.md,
+> TOOLS.md, IDENTITY.md, USER.md, HEARTBEAT.md, BOOTSTRAP.md, MEMORY.md.
+> Use this template to plan your Agent's operations, then transfer the content
+> into AGENTS.md (which IS auto-loaded). See the mapping table below.
+
 ## Template Structure
 
 The system prompt has 5 sections. **Section 0** is standardized across all Agents; **Sections 1-4** are customized per Agent.
@@ -344,6 +350,25 @@ Defines **hard rules** the Agent must never violate — security boundaries, per
 - 禁止在未经用户确认的情况下 force push
 - 禁止跳过 pre-commit hooks
 ```
+
+## Mapping to Bootstrap Files
+
+system-prompt.md is a planning tool. Its sections map to actual bootstrap files as follows:
+
+| System Prompt Section | Target Bootstrap File | Target Section |
+|----------------------|----------------------|----------------|
+| §0 Bootstrap Preamble | AGENTS.md | Boot Sequence (§1) |
+| §1 Role & Mission | AGENTS.md | Primary Directives (§2) |
+| §2 Workflow & Tools | AGENTS.md + TOOLS.md | Task Queue (§3) + Tool Usage |
+| §3 Output Format | AGENTS.md | Response Guidelines (§4) |
+| §4 Constraints | AGENTS.md | Safety (§7) |
+
+### Workflow
+
+1. Draft operations in system-prompt.md using the 5-section template
+2. Transfer content into AGENTS.md (and TOOLS.md for tool-specific details)
+3. Keep system-prompt.md in `agent/` directory for version control and human review
+4. The Agent sees only AGENTS.md at runtime — system-prompt.md is not injected
 
 ## Restrictions
 

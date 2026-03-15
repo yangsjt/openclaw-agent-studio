@@ -1,11 +1,11 @@
 ---
 name: openclaw-agent-studio
-description: Guide for creating, optimizing, and maintaining OpenClaw Agents — three-layer architecture (SOUL.md inner core + IDENTITY.md expression + system-prompt operations), bootstrap files, workspace token budget, memory distillation, and configuration.
+description: Guide for creating, optimizing, and maintaining OpenClaw Agents — three-layer architecture (SOUL.md inner core + IDENTITY.md expression + AGENTS.md operations), bootstrap files, workspace token budget, memory distillation, and configuration.
 ---
 
 # OpenClaw Agent Studio Guide
 
-Create, optimize, and maintain OpenClaw Agents using the three-layer architecture: SOUL.md (inner core) + IDENTITY.md (external expression) + system-prompt (operations).
+Create, optimize, and maintain OpenClaw Agents using the three-layer architecture: SOUL.md (inner core) + IDENTITY.md (external expression) + AGENTS.md (operations).
 
 ## Reference Files
 
@@ -52,7 +52,7 @@ Gather the Agent's inner core and external expression:
 
 ### 3. Generate System Prompt (Operation Manual)
 
-Write the `instruction` field with 5 sections: Bootstrap preamble (5-step: Detect → Load → Awaken → Adapt → Write back) + Role & Mission + Workflow & Tools + Output Format + Operational Constraints. See [system-prompt-template.md](references/system-prompt-template.md).
+Draft operations using the 5-section template, then transfer content into AGENTS.md (system-prompt.md is a design artifact, not auto-loaded by OpenClaw). See [system-prompt-template.md](references/system-prompt-template.md).
 
 ### 4. Create Workspace Directory
 
@@ -69,7 +69,7 @@ Create the complete bootstrap file set:
 | File | Required | Purpose |
 |------|----------|---------|
 | SOUL.md | Yes | Inner core — personality, values, communication |
-| AGENTS.md | Recommended | Runtime context + operating instructions + memory |
+| AGENTS.md | Recommended | Runtime context + **operations from system-prompt** + memory |
 | TOOLS.md | Recommended | Tool usage notes |
 | IDENTITY.md | Recommended | External expression — name, style, emoji, catchphrase |
 | BOOTSTRAP.md | Recommended | First-run ritual (auto-deleted) |
@@ -110,7 +110,7 @@ Collect the Agent's current state: workspace files, SOUL.md content, openclaw.js
 
 Run gap analysis against spec checklists:
 - **SOUL.md**: 4 sections complete (Role / Personality / Values / Communication)? No misplaced content?
-- **System Prompt**: Uses bootstrap + 4-section operation manual? Motivation-action chain from SOUL.md?
+- **Operations Coverage**: system-prompt content transferred to AGENTS.md? No redundancy?
 - **Bootstrap Files**: Required files exist? Content follows templates? IDENTITY.md present?
 - **Configuration**: agents.list entry correct? Workspace path valid? Bindings set?
 

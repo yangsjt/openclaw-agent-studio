@@ -19,11 +19,36 @@ The Agent's identity and configuration are decomposed into physical files in the
 
 - **SOUL.md (Inner Core)**: Personality, values, and communication habits — constant across all environments
 - **IDENTITY.md (External Expression)**: Name, emoji, style — adjustable per scenario
-- **AGENTS.md + system-prompt (Operations)**: Runtime context, workflows, constraints — changes per deployment
+- **AGENTS.md (Operations)**: Runtime context, workflows, constraints — changes per deployment (system-prompt.md serves as design source)
 
 Key properties:
 - **Physical persistence**: Configuration moves with the workspace. As long as disk is intact, settings are never lost
 - **Environment self-adaptation**: On startup, the Agent reads AGENTS.md §1 Runtime Context to determine its environment, and SOUL.md to internalize its personality
+
+## System Prompt for Dynamic Agents
+
+Dynamic agents (created via channel bindings with `dynamicAgents.enabled: true`) do
+not have a dedicated `agentDir` and therefore no standalone `system-prompt.md`.
+
+### Recommended: Operations in AGENTS.md
+
+Transfer all operations content into AGENTS.md — the same approach used for
+static agents. This keeps the pattern consistent:
+
+- **SOUL.md**: Personality core only (WHO) — copied from parent agent
+- **AGENTS.md**: Runtime context + operations (WHAT/HOW) — adapted for channel context
+- **IDENTITY.md**: External expression — same as or adjusted from parent
+
+### Anti-pattern: Merging into SOUL.md
+
+Do NOT merge system-prompt operations content into SOUL.md. This violates the
+three-layer architecture:
+- SOUL.md should remain personality-only ("the soul is constant")
+- Mixing operations into SOUL.md makes maintenance difficult
+- Updates to operations require touching the personality file
+
+If a dynamic workspace has operations merged into SOUL.md, consider migrating:
+split the SOUL.md back into pure personality (SOUL.md) + operations (AGENTS.md).
 
 ## Three Maintenance Layers
 

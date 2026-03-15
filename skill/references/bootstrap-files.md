@@ -20,6 +20,11 @@ OpenClaw injects bootstrap files into the Agent workspace (`agents.defaults.work
 
 These files are created by `openclaw setup` and can be manually edited at any time.
 
+> **Important**: `system-prompt.md` is NOT in this list and is NOT auto-loaded by
+> OpenClaw. It is a design artifact used during Agent creation to plan operations.
+> Its content must be transferred into AGENTS.md (and TOOLS.md) to take effect.
+> See [system-prompt-template.md](system-prompt-template.md) for the mapping.
+
 To skip bootstrap file injection: `{ agent: { skipBootstrap: true } }`.
 
 ## Three-Layer Architecture
@@ -33,7 +38,7 @@ SOUL.md (Inner Core — personality, values, communication. Unchanging.)
   │     ├── TOOLS.md (tool usage details)
   │     └── MEMORY.md (long-term memory)
   │
-  └── system-prompt (Bootstrap + Professional Capability Definition)
+  └── system-prompt.md (Design artifact — content transferred into AGENTS.md)
         └── USER.md (user preferences)
 ```
 
@@ -43,15 +48,15 @@ SOUL.md (Inner Core — personality, values, communication. Unchanging.)
 |-------|---------|---------|-----------------|
 | **Inner Core** | SOUL.md | WHO the Agent is — personality, values, habits | Never (the soul is constant) |
 | **External Expression** | IDENTITY.md | How others see the Agent — name, emoji, style | Scenario changes (dev vs. support mode) |
-| **Operations** | AGENTS.md + system-prompt | WHAT the Agent does and HOW | Task, environment, or deployment changes |
+| **Operations** | AGENTS.md (+ system-prompt.md as design source) | WHAT the Agent does and HOW | Task, environment, or deployment changes |
 
 ### Key Relationships
 
 - **SOUL.md** is the foundation — defines the Agent's character and decision-making compass
 - **IDENTITY.md** extends SOUL.md — same personality expressed through different names, styles, and catchphrases
 - **AGENTS.md** contains runtime context (environment, tools, paths) and operational instructions
-- **system-prompt** bootstraps the Agent and defines professional role, workflows, and constraints
-- **SOUL.md drives system-prompt** via the motivation-action chain (personality traits → operational rules)
+- **system-prompt.md** is a design artifact — its content is transferred into AGENTS.md for runtime use
+- **SOUL.md drives operations** via the motivation-action chain (personality traits → operational rules in AGENTS.md)
 
 ## File Templates
 
