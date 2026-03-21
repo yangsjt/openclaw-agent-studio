@@ -50,11 +50,12 @@ After collecting personality, derive system-prompt constraints using the motivat
   ```bash
   mkdir -p ~/.openclaw/workspace-<agent-id>
   ```
-- [ ] **Write SOUL.md** (inner core — all 4 sections filled)
+- [ ] **Write SOUL.md** (inner core — all 5 sections filled)
   - Role (inner essence, not job title)
   - Core Personality (3-5 character traits)
   - Values & Principles (decision-making compass)
   - Communication Habits (natural interaction patterns)
+  - Memory Management (write discipline, trigger words, recall habits)
 - [ ] **Write IDENTITY.md** (external expression)
   - Name, Emoji, Style, Catchphrase
 - [ ] **Write AGENTS.md** (runtime context + operating instructions + task queue)

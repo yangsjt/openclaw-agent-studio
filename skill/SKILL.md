@@ -16,7 +16,7 @@ Create, optimize, and maintain OpenClaw Agents using the three-layer architectur
 | [bootstrap-files.md](references/bootstrap-files.md) | Complete bootstrap + workspace file system (11 files) |
 | [creation-checklist.md](references/creation-checklist.md) | Creation checklist + openclaw.json config template |
 | [dynamic-management.md](references/dynamic-management.md) | Dynamic management, memory, cross-node migration |
-| [alternative-approaches.md](references/alternative-approaches.md) | ACP agents + sub-agents reference |
+| [alternative-approaches.md](references/alternative-approaches.md) | ACP agents + sub-agents + A2A reference |
 | [optimization-guide.md](references/optimization-guide.md) | Audit and optimize existing Agents |
 | [workspace-maintenance.md](references/workspace-maintenance.md) | Token budget, redundancy audit, memory distillation |
 
@@ -60,7 +60,7 @@ Draft operations using the 5-section template, then transfer content into AGENTS
 
 ### 5. Write SOUL.md (Inner Core)
 
-Create SOUL.md with 4 sections: (1) Role, (2) Core Personality, (3) Values & Principles, (4) Communication Habits. See [soul-md-spec.md](references/soul-md-spec.md) for full spec and examples.
+Create SOUL.md with 5 sections: (1) Role, (2) Core Personality, (3) Values & Principles, (4) Communication Habits, (5) Memory Management. See [soul-md-spec.md](references/soul-md-spec.md) for full spec and examples.
 
 ### 6. Generate Bootstrap Files
 
@@ -109,7 +109,7 @@ Collect the Agent's current state: workspace files, SOUL.md content, openclaw.js
 ### 2. Analyze
 
 Run gap analysis against spec checklists:
-- **SOUL.md**: 4 sections complete (Role / Personality / Values / Communication)? No misplaced content?
+- **SOUL.md**: 5 sections complete (Role / Personality / Values / Communication / Memory)? No misplaced content?
 - **Operations Coverage**: system-prompt content transferred to AGENTS.md? No redundancy?
 - **Bootstrap Files**: Required files exist? Content follows templates? IDENTITY.md present?
 - **Configuration**: agents.list entry correct? Workspace path valid? Bindings set?

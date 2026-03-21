@@ -386,8 +386,32 @@ OpenClaw auto-skips execution when HEARTBEAT.md contains only empty lines and he
 
 **Design principles**:
 - Append-only during active sessions; summarize at end of day
-- Facts worth keeping long-term should be promoted to MEMORY.md or stored via `memory_search`
+- Facts worth keeping long-term should be promoted to MEMORY.md; all memory files are automatically indexed for `memory_search`
 - Archive or delete logs older than 30 days
+
+---
+
+### Memory Indexing Pipeline
+
+When the Agent writes to `MEMORY.md` or `memory/*.md`, the `memory-core` plugin automatically indexes the content for semantic search:
+
+```
+Agent writes to memory file
+  → memory-core file watcher detects changes (debounced)
+  → content chunked into searchable snippets
+  → embeddings computed (default: Qwen/Qwen3-Embedding-8B via SiliconFlow)
+  → indexed into SQLite
+  → memory_search tool provides semantic recall
+```
+
+**Memory tools available to the Agent**:
+
+| Tool | Description |
+|------|-------------|
+| `memory_search` | Semantic recall over indexed snippets (hybrid vector + BM25) |
+| `memory_get` | Targeted read of a specific memory file or line range |
+
+The Agent should reference these tools in SOUL.md Section 5 (Memory Management) and use them proactively to recall past context before asking the user to repeat information.
 
 ---
 

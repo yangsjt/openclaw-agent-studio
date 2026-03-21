@@ -30,7 +30,7 @@ The skill teaches a three-layer architecture for Agent configuration:
 
 | Layer | File | Defines | Stability |
 |-------|------|---------|-----------|
-| Inner Core | SOUL.md | Personality, values, communication habits | Never changes |
+| Inner Core | SOUL.md | Personality, values, communication habits, memory management | Never changes |
 | External Expression | IDENTITY.md | Name, emoji, style, catchphrase | Per scenario |
 | Operations | system-prompt + AGENTS.md | Professional role, workflows, constraints, runtime context | Per task/deployment |
 
@@ -42,7 +42,7 @@ Chinese-language source documents that the skill content was derived from. When 
 
 - `docs/OpenClaw Agent 创建与系统提示词规范.md` — System prompt + SOUL.md spec (primary source)
 - `docs/OpenClaw 动态 Agent 管理规范.md` — Dynamic management (primary source)
-- `docs/OpenClaw Agent 替代创建方案.md` — ACP + Sub-agents comparison
+- `docs/OpenClaw Agent 替代创建方案.md` — ACP + Sub-agents + A2A comparison
 - `docs/PRD.md` — Product requirements document
 
 ### External Dependencies (read-only references)

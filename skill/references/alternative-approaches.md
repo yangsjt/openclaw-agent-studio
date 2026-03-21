@@ -1,6 +1,6 @@
-# Alternative Agent Creation Approaches
+# Alternative Agent Approaches
 
-Beyond the standard SOUL.md-driven Agent creation, OpenClaw supports two additional approaches for specialized use cases.
+Beyond the standard SOUL.md-driven Agent creation, OpenClaw supports additional approaches for specialized use cases.
 
 ## ACP Agents (External Runtime)
 
@@ -122,19 +122,80 @@ Via slash command:
 - Maximum nesting depth: 5 (depth 2 recommended)
 - Sessions are ephemeral — archived after `archiveAfterMinutes` (default: 60)
 
-## Comparison: Three Approaches
+## A2A Communication (Agent-to-Agent via sessions_send)
 
-| Dimension | SOUL.md-Driven Agent | ACP Agent | Sub-agent |
-|-----------|---------------------|-----------|-----------|
-| **Runtime** | Internal Pi | External process (Codex, Claude, etc.) | Internal Pi |
-| **Persistence** | Full workspace + SOUL.md | Session-level | Session-level |
-| **Independence** | Fully independent | Semi-independent | Depends on parent Agent |
-| **Bootstrap Files** | All 6 files | External runtime config | AGENTS.md + TOOLS.md only |
-| **Workspace** | Dedicated directory | Shared or external | Inherits parent workspace |
-| **Configuration** | openclaw.json `agents.list` | `acp` config section | `subagents` config section |
-| **Channel Binding** | Via `bindings` | Via thread binding | Via thread binding |
-| **Use Case** | Long-running specialized Agent | External AI runtime capabilities | Temporary parallel tasks |
-| **Setup Effort** | High (workspace + files + config) | Medium (plugin + config) | Low (tool call or slash command) |
+A2A enables agents to communicate directly with each other using the `sessions_send` tool, forming collaborative agent teams where each worker has **full Agent-level capabilities** — unlike sub-agents which only receive AGENTS.md + TOOLS.md.
+
+### When to Use
+
+- Need a worker agent with **full bootstrap context** (SOUL.md, all files, full workspace)
+- Need multi-turn collaboration between agents (ping-pong dialogue)
+- Need to delegate work to an agent that maintains its own persistent identity and memory
+- Building agent teams where each member is a fully independent Agent
+
+### How It Works
+
+Agent A uses `sessions_send` to send a message to Agent B's session:
+
+```json
+{
+  "tool": "sessions_send",
+  "params": {
+    "sessionKey": "agent:<target-agent-id>:main",
+    "message": "Please analyze the authentication module and report findings"
+  }
+}
+```
+
+Agent B processes the message with its **full bootstrap context** (SOUL.md, AGENTS.md, TOOLS.md, IDENTITY.md, MEMORY.md) and responds. The response flows back to Agent A.
+
+### Key Properties
+
+- **Full bootstrap context**: Unlike sub-agents (AGENTS.md + TOOLS.md only), A2A targets are complete agents with all bootstrap files
+- **Ping-pong dialogue**: Supports multi-turn exchanges (configurable via `session.agentToAgent.maxPingPongTurns`; use `REPLY_SKIP` to end the exchange)
+- **Independent identity**: Each agent maintains its own SOUL.md personality and workspace
+- **Persistent**: Target agent persists across interactions (unlike ephemeral sub-agents)
+
+### Configuration
+
+Enable A2A by including `sessions_send` in the agent's available tools (included by default):
+
+```json5
+{
+  tools: {
+    // sessions_send is available by default
+    // To explicitly deny A2A for a specific agent:
+    // deny: ["sessions_send"],
+  },
+}
+```
+
+**AGENTS.md tool visibility**: Default include `sessions_send` in AGENTS.md tools section. Only omit when the agent explicitly should not have A2A capability. Omitting the tool description is a soft control — the LLM will not call a tool it does not know about.
+
+### Sub-agent vs. A2A: Bootstrap Context Comparison
+
+| Aspect | Sub-agent (sessions_spawn) | A2A (sessions_send) |
+|--------|--------------------------|---------------------|
+| Bootstrap files loaded | AGENTS.md + TOOLS.md only | **All files** (SOUL.md, AGENTS.md, TOOLS.md, IDENTITY.md, USER.md, MEMORY.md) |
+| Personality | None (no SOUL.md) | Full personality from target's SOUL.md |
+| Memory access | No MEMORY.md, no memory_search | Full memory pipeline |
+| Workspace | Inherits parent workspace | Own dedicated workspace |
+| Persistence | Ephemeral (archived after timeout) | Persistent across sessions |
+| Communication model | Task delegation (one-shot or session) | Dialogue (ping-pong) |
+
+## Comparison: Four Approaches
+
+| Dimension | SOUL.md-Driven Agent | ACP Agent | Sub-agent | A2A (sessions_send) |
+|-----------|---------------------|-----------|-----------|---------------------|
+| **Runtime** | Internal Pi | External process (Codex, Claude, etc.) | Internal Pi | Internal Pi (target agent) |
+| **Persistence** | Full workspace + SOUL.md | Session-level | Session-level | Full workspace + SOUL.md |
+| **Independence** | Fully independent | Semi-independent | Depends on parent Agent | Fully independent |
+| **Bootstrap Files** | All files | External runtime config | AGENTS.md + TOOLS.md only | **All files** (target agent) |
+| **Workspace** | Dedicated directory | Shared or external | Inherits parent workspace | Dedicated directory (target) |
+| **Configuration** | openclaw.json `agents.list` | `acp` config section | `subagents` config section | `sessions_send` tool + target agent config |
+| **Channel Binding** | Via `bindings` | Via thread binding | Via thread binding | N/A (direct agent session) |
+| **Use Case** | Long-running specialized Agent | External AI runtime capabilities | Temporary parallel tasks | Agent team collaboration |
+| **Setup Effort** | High (workspace + files + config) | Medium (plugin + config) | Low (tool call or slash command) | Medium (both agents must exist) |
 
 ## Decision Guide
 
@@ -158,4 +219,13 @@ Need a quick one-shot task delegation?
 
 Need persistent thread-bound external session?
   → ACP Agent (mode: "persistent", thread: "auto")
+
+Need a worker with full personality, memory, and bootstrap context?
+  → A2A (sessions_send to a fully-configured target agent)
+
+Need multi-turn collaboration between two independent agents?
+  → A2A (sessions_send with ping-pong)
+
+Need a lightweight parallel worker (no personality needed)?
+  → Sub-agent (only gets AGENTS.md + TOOLS.md — fastest to set up)
 ```

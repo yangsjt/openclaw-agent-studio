@@ -44,6 +44,7 @@ cd ~/.openclaw/workspace-<agent-id> && git log --oneline -5
 | Section 2: Core Personality | High | 3-5 character traits listed with explanations |
 | Section 3: Values & Principles | High | Decision-making principles defined |
 | Section 4: Communication Habits | Medium | Natural communication patterns described |
+| Section 5: Memory Management | Medium | Memory write/trigger/recall habits defined |
 | No environment/path/tool info | Medium | Environment info is in AGENTS.md, not SOUL.md |
 | No operational constraints | Medium | Constraints are in system-prompt §4, not SOUL.md |
 | No memory entries | Medium | Memory is in MEMORY.md, not SOUL.md |

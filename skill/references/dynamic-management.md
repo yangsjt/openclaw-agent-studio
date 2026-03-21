@@ -13,6 +13,11 @@
 
 Agent workspace files and SOUL.md are always stored on the **current execution node's disk**, whether local or remote.
 
+> **Dynamic Workspace Manager**: Dynamic workspaces (created via `dynamicAgents.enabled: true`)
+> are fully managed by **openclaw-plugin-wecom**. This plugin handles workspace creation,
+> file injection, and lifecycle management for dynamically-created agents. Static agents
+> use the standard `agentDir` approach instead.
+
 ## Core Principle: Configuration as File
 
 The Agent's identity and configuration are decomposed into physical files in the workspace directory using a three-layer architecture:
@@ -27,8 +32,22 @@ Key properties:
 
 ## System Prompt for Dynamic Agents
 
+> **Key insight**: `system-prompt.md` is **never auto-loaded** by OpenClaw — not even
+> for static agents. It is purely a **design and documentation artifact**. Its content
+> must be transferred into AGENTS.md to take effect at runtime.
+
 Dynamic agents (created via channel bindings with `dynamicAgents.enabled: true`) do
-not have a dedicated `agentDir` and therefore no standalone `system-prompt.md`.
+not have a dedicated `agentDir`. Dynamic workspaces are fully managed by
+**openclaw-plugin-wecom** — there is no standalone `system-prompt.md` file and no
+place to store one even as a design artifact.
+
+### Implication for Dynamic Agents
+
+Since dynamic agents lack an `agentDir`:
+- **ALL operational content** must live in AGENTS.md (which IS bootstrapped)
+- There is no workspace directory to hold `system-prompt.md` as a file
+- The system-prompt template remains useful as a **planning tool** — draft operations
+  using the 5-section template, then copy the content into AGENTS.md
 
 ### Recommended: Operations in AGENTS.md
 
@@ -86,6 +105,28 @@ split the SOUL.md back into pure personality (SOUL.md) + operations (AGENTS.md).
 - Agent writes key progress to MEMORY.md (curated long-term) or daily logs (session-level)
 - Enables "checkpoint resume" — Agent can pick up where it left off
 
+### Memory Pipeline (Indexing & Search)
+
+When the Agent writes to `MEMORY.md` or `memory/*.md`, an automatic indexing pipeline processes the content:
+
+```
+Agent writes to memory/*.md or MEMORY.md
+  → memory-core plugin file watcher detects changes
+  → chunk content into searchable snippets
+  → compute embeddings (default: Qwen/Qwen3-Embedding-8B via SiliconFlow)
+  → index into SQLite
+  → memory_search tool becomes available for semantic recall
+```
+
+This pipeline runs in the background via the `memory-core` plugin. The Agent does not need to trigger indexing manually — writing to memory files is sufficient.
+
+**Available memory tools**:
+
+| Tool | Description |
+|------|-------------|
+| `memory_search` | Semantic recall over indexed snippets (hybrid vector + BM25) |
+| `memory_get` | Targeted read of a specific memory file or line range |
+
 ### Best Practice
 
 Combine both memory types:
@@ -93,6 +134,7 @@ Combine both memory types:
 2. Write session progress to daily logs (`memory/YYYY-MM-DD.md`)
 3. Distill significant learnings into MEMORY.md periodically
 4. At session end, ensure important context is persisted to the appropriate memory file
+5. Use `memory_search` to recall past context before asking the user to repeat information
 
 ## Cross-Node Migration
 

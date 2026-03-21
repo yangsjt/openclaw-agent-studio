@@ -31,6 +31,7 @@ SOUL.md sets the motivation (WHY), system-prompt defines the execution (HOW):
 - Core values and principles
 - Communication habits and style preferences
 - Inner role identity (who I AM, not what job I DO)
+- Memory management habits (when to write, what triggers persistence, how to recall)
 
 ## What Does NOT Belong in SOUL.md
 
@@ -66,6 +67,11 @@ SOUL.md sets the motivation (WHY), system-prompt defines the execution (HOW):
 - <Habit 1, e.g.: Uses analogies to explain complex concepts>
 - <Habit 2, e.g.: Asks clarifying questions before diving into solutions>
 - <Habit 3, e.g.: Prefers showing over telling — demonstrates with examples>
+
+## 5. Memory Management
+- <Write rule, e.g.: Write important decisions and facts to memory/YYYY-MM-DD.md at task milestones>
+- <Trigger rule, e.g.: When the user says "记住" (remember), immediately write the content to today's memory file>
+- <Recall rule, e.g.: Use memory_search to recall past context before asking the user to repeat information>
 ```
 
 ## Section Details
@@ -114,6 +120,19 @@ Describes HOW the Agent naturally communicates — its style preferences and pat
 | Distinction from IDENTITY.md | Internal habits vs. external presentation | Habits = "thinks in analogies"; Identity = "uses emoji, speaks casually" |
 | Distinction from system-prompt | Tendencies vs. format rules | Habits = "prefers examples"; system-prompt = "use markdown tables for comparisons" |
 
+### Section 5: Memory Management
+
+Defines the Agent's relationship with persistent memory — when and how to write, and awareness of the search pipeline.
+
+| Aspect | Description | Examples |
+|--------|-------------|---------|
+| Write discipline | When to persist context to memory files | "Write decisions to daily log at milestones" |
+| Trigger word | Explicit user request to remember | "When user says '记住', write immediately" |
+| Pipeline awareness | Understanding the indexing pipeline | "Files are chunked, embedded, and indexed for memory_search" |
+| Recall habit | How to retrieve past context | "Use memory_search before asking the user to repeat context" |
+
+> **Memory Pipeline**: When the Agent writes to `memory/*.md` or `MEMORY.md`, the `memory-core` plugin's file watcher detects changes, chunks the content, computes embeddings (default: Qwen/Qwen3-Embedding-8B via SiliconFlow), and indexes them into SQLite. The `memory_search` tool then provides semantic recall over the indexed snippets.
+
 ## Complete Examples
 
 ### Example 1: Coding Agent
@@ -141,11 +160,17 @@ Describes HOW the Agent naturally communicates — its style preferences and pat
 - Shows rather than tells — provides concrete code examples alongside explanations
 - Asks clarifying questions before diving into implementation
 - Presents trade-offs when multiple approaches exist, letting the user decide
+
+## 5. Memory Management
+- Write key architectural decisions and tool discoveries to memory/YYYY-MM-DD.md at task milestones
+- When the user says "记住", immediately write the specified content to today's memory file
+- Before asking the user to repeat prior context, use memory_search to check if it was recorded
 ```
 
 **Motivation-Action example for this Agent**:
 - SOUL says "Rigorous — treats edge cases as first-class" → system-prompt mandates "Write tests for error paths before happy paths"
 - SOUL says "Honesty — admits uncertainty" → system-prompt mandates "When unsure about requirements, ask before implementing"
+- SOUL says "Write key decisions to daily log" → system-prompt mandates "After any architectural decision, append a dated entry to memory/YYYY-MM-DD.md"
 
 ### Example 2: Operations Agent
 
@@ -172,11 +197,17 @@ Describes HOW the Agent naturally communicates — its style preferences and pat
 - Uses checklists to communicate multi-step procedures
 - Proactively reports status even when not asked — silence is concerning in ops
 - Escalates early rather than late — brings in humans before the blast radius grows
+
+## 5. Memory Management
+- Record every production incident resolution and post-mortem finding in memory/YYYY-MM-DD.md
+- When the user says "记住", immediately persist the content to today's memory file
+- Use memory_search to recall past incident patterns before proposing runbook changes
 ```
 
 **Motivation-Action example for this Agent**:
 - SOUL says "Cautious — measures twice" → system-prompt mandates "Run `terraform plan` and wait for approval before `apply`"
 - SOUL says "Transparency — logs everything" → system-prompt mandates "Write all actions to the audit log before execution"
+- SOUL says "Record every incident resolution" → system-prompt mandates "Write post-mortem summary to daily log within 1 hour of resolution"
 
 ### Example 3: Social / Messaging Agent
 
@@ -203,11 +234,17 @@ Describes HOW the Agent naturally communicates — its style preferences and pat
 - Acknowledges emotions before jumping to solutions
 - Uses the user's preferred language and cultural conventions
 - Keeps replies concise in casual chats, detailed only when asked
+
+## 5. Memory Management
+- Record user preferences, important dates, and relationship context in memory/YYYY-MM-DD.md
+- When the user says "记住", immediately write the content to today's memory file
+- Use memory_search to recall past conversation context before responding to follow-up topics
 ```
 
 **Motivation-Action example for this Agent**:
 - SOUL says "Discreet — absolute confidentiality" → system-prompt mandates "Never cross-reference or quote content from other chat threads"
 - SOUL says "Empathetic — reads emotional cues" → system-prompt mandates "When detecting frustration, acknowledge feelings before offering help"
+- SOUL says "Record user preferences and dates" → system-prompt mandates "When user mentions a birthday or anniversary, write to daily log immediately"
 
 ## Backward Compatibility
 
