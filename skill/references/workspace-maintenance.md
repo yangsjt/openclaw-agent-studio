@@ -53,21 +53,7 @@ Common sources of duplication across workspace files under the three-layer archi
 
 ### Three-Layer Separation Check
 
-When auditing, verify the three layers are properly separated:
-
-| Content type | Correct location | Wrong locations |
-|-------------|-----------------|-----------------|
-| Personality traits | SOUL.md §2 | system-prompt, AGENTS.md |
-| Values & principles | SOUL.md §3 | system-prompt §4 (values ≠ constraints) |
-| Communication habits | SOUL.md §4 | IDENTITY.md (habits ≠ style) |
-| Name, emoji, catchphrase | IDENTITY.md | SOUL.md |
-| Node Type, OS, hardware | AGENTS.md §1 | SOUL.md |
-| Paths, tools, toolchain | AGENTS.md §1 | SOUL.md |
-| Professional role/title | system-prompt §1 | SOUL.md §1 (essence ≠ job title) |
-| Workflow procedures | system-prompt §2 | SOUL.md |
-| Output format rules | system-prompt §3 | AGENTS.md |
-| Security/permission rules | system-prompt §4 | SOUL.md §4 (constraints ≠ habits) |
-| Task progress, decisions | MEMORY.md / daily logs | SOUL.md |
+For the full content placement matrix, see [optimization-guide.md](optimization-guide.md) Patterns 8, 9, 10, and [gotchas.md](gotchas.md) #2.
 
 ### When to Move Content to docs/
 
@@ -227,12 +213,4 @@ When time is short, audit in this priority order:
 
 ## Common Issues
 
-| Issue | Symptom | Fix |
-|-------|---------|-----|
-| File exceeds token limit | Over 20,000 chars; OpenClaw truncates | Move detailed content to `docs/` |
-| MEMORY.md leaking to groups | Agent shares private context in group chats | Gate in AGENTS.md: "Main session only: Read MEMORY.md" |
-| Boot sequence not loading files | Agent doesn't know about SOUL.md/USER.md content | Check AGENTS.md boot sequence explicitly names each file |
-| MEMORY.md growing too large | Exceeds 10,000 chars | Run memory distillation; move stable rules to skill SKILL.md |
-| Workspace changes not taking effect | Agent uses old content after edits | Restart gateway or start new session |
-| Personality in wrong file | Traits in system-prompt or AGENTS.md | Move to SOUL.md; keep only derived rules elsewhere |
-| Environment info in SOUL.md | Legacy format with Node Type, paths in SOUL.md | Migrate to AGENTS.md §1 Runtime Context (see Pattern 10) |
+For detailed issue patterns and fixes, see [optimization-guide.md](optimization-guide.md) (12 patterns) and [gotchas.md](gotchas.md) (7 pitfalls).

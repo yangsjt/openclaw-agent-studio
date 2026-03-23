@@ -1,0 +1,20 @@
+{
+  "name": "openclaw-agent-studio",
+  "version": "1.0.0",
+  "type": "content",
+  "triggers": [
+    "agent creation",
+    "SOUL.md",
+    "system-prompt",
+    "workspace audit",
+    "bootstrap",
+    "IDENTITY.md",
+    "AGENTS.md",
+    "openclaw agent"
+  ],
+  "related_skills": ["openclaw"],
+  "hooks": {
+    "applicable": false,
+    "reason": "Content-only skill — no tool execution to hook into"
+  }
+}

@@ -22,7 +22,9 @@ After install, edits to files under `skill/` take effect immediately (symlink).
 ### Two-Layer Content Model
 
 - **`skill/SKILL.md`** — Main entry point loaded by Claude Code. Must stay under **150 lines** to control token consumption. Contains three workflows (8-step creation + 5-step optimization + 5-step maintenance) overview and links to references.
-- **`skill/references/*.md`** (8 files) — Detailed templates, specs, and checklists loaded on demand. These can be longer.
+- **`skill/references/*.md`** (9 files) — Detailed templates, specs, checklists, and gotchas loaded on demand. These can be longer.
+- **`skill/config.json`** — Skill metadata (version, triggers, related skills). Content-only skill — hooks not applicable.
+- **`skill/scripts/workspace-audit.sh`** — Quick workspace health check script (file existence, token budget, SOUL.md structure).
 
 ### Three-Layer Agent Architecture
 

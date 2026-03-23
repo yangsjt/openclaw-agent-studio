@@ -1,6 +1,6 @@
 ---
 name: openclaw-agent-studio
-description: Guide for creating, optimizing, and maintaining OpenClaw Agents — three-layer architecture (SOUL.md inner core + IDENTITY.md expression + AGENTS.md operations), bootstrap files, workspace token budget, memory distillation, and configuration.
+description: "Create, audit, and maintain OpenClaw Agents. Covers three-layer architecture (SOUL.md + IDENTITY.md + AGENTS.md), bootstrap files, system-prompt design, workspace maintenance. TRIGGER: agent creation, SOUL.md, system-prompt, workspace audit. NOT for install/configure/troubleshoot — use 'openclaw' skill."
 ---
 
 # OpenClaw Agent Studio Guide
@@ -19,20 +19,20 @@ Create, optimize, and maintain OpenClaw Agents using the three-layer architectur
 | [alternative-approaches.md](references/alternative-approaches.md) | ACP agents + sub-agents + A2A reference |
 | [optimization-guide.md](references/optimization-guide.md) | Audit and optimize existing Agents |
 | [workspace-maintenance.md](references/workspace-maintenance.md) | Token budget, redundancy audit, memory distillation |
+| [gotchas.md](references/gotchas.md) | 7 common pitfalls (system-prompt loading, SOUL.md boundaries, bootstrap context) |
 
 ## When to Activate
 
-- User asks to create a new OpenClaw Agent
-- User needs to write a system prompt for an Agent
-- User wants to generate or edit SOUL.md
-- User is configuring an Agent workspace or openclaw.json
-- User asks about Agent creation workflow or best practices
-- User wants to audit, review, or optimize an existing Agent
-- User asks to check an Agent against documentation or best practices
-- User wants to fix or improve an Agent that is not working correctly
-- User wants to audit workspace token budget or reduce bloat
-- User wants to run memory distillation on daily logs
-- User wants to check workspace files for redundancy or staleness
+- User asks to create, audit, or optimize an OpenClaw Agent
+- User needs to write or review SOUL.md, IDENTITY.md, or system-prompt
+- User is configuring Agent workspace, bootstrap files, or openclaw.json
+- User wants workspace token budget audit, redundancy check, or memory distillation
+
+## When NOT to Use
+
+- Installing or upgrading OpenClaw itself → use `openclaw` skill
+- Troubleshooting Gateway/Node connectivity → use `openclaw` skill
+- General configuration not Agent-specific → use `openclaw` skill
 
 ## Agent Creation Workflow
 
@@ -134,10 +134,10 @@ Run `openclaw doctor`, test Agent identity and constraints, confirm git tracks c
 
 Day-to-day workspace health — keep files lean, non-redundant, and within token budget.
 
-1. **Token Budget Audit** — Flag files over 10k chars; fix immediately if over 20k (truncated). Target: <80k total for auto-loaded files.
-2. **Redundancy Check** — Cross-check SOUL.md vs AGENTS.md, TOOLS.md vs MEMORY.md, AGENTS.md vs docs/. Remove duplicates.
-3. **Staleness Review** — Dead SSH hosts, completed tasks, changed preferences, obsolete personality traits.
-4. **Memory Distillation** — Promote daily logs to MEMORY.md. Demote stable rules to skill docs. Archive logs >30 days.
-5. **Offload to docs/** — Move long narrative and historical context out of bootstrap files.
+1. **Token Budget Audit** — Flag files over 10k chars; fix immediately if over 20k. Target: <80k total.
+2. **Redundancy Check** — Cross-check SOUL.md vs AGENTS.md, TOOLS.md vs MEMORY.md. Remove duplicates.
+3. **Staleness Review** — Dead SSH hosts, completed tasks, obsolete personality traits.
+4. **Memory Distillation** — Promote daily logs to MEMORY.md. Demote stable rules to skill docs.
+5. **Offload to docs/** — Move long narrative out of bootstrap files.
 
-See [workspace-maintenance.md](references/workspace-maintenance.md) for audit commands, redundancy matrix, and distillation process.
+See [workspace-maintenance.md](references/workspace-maintenance.md) for details. Review [gotchas.md](references/gotchas.md) for common mistakes.

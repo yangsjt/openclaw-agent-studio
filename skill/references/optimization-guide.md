@@ -142,7 +142,7 @@ Reference: [bootstrap-files.md](bootstrap-files.md) for templates and file relat
 
 **Symptom**: SOUL.md is missing, empty, or has no personality content.
 
-**Fix**: Generate complete SOUL.md using the [standard template](soul-md-spec.md#standard-template) with all 4 sections (Role / Core Personality / Values & Principles / Communication Habits). Gather personality traits from the user or infer from the Agent's purpose.
+**Fix**: Generate complete SOUL.md using the [standard template](soul-md-spec.md#standard-template) with all 5 sections (Role / Core Personality / Values & Principles / Communication Habits / Memory Management). Gather personality traits from the user or infer from the Agent's purpose.
 
 ### Pattern 2: Hardcoded System Prompt
 
@@ -195,7 +195,7 @@ git commit -m "chore: initialize agent workspace recording layer"
 
 **Fix**: Extract personality content to SOUL.md:
 1. Identify personality traits embedded in the system prompt
-2. Create or update SOUL.md with proper 4-section structure
+2. Create or update SOUL.md with proper 5-section structure
 3. Keep only the professional role definition in system-prompt §1
 4. Derive operational rules from the extracted personality using the motivation-action chain
 
@@ -235,11 +235,12 @@ git commit -m "chore: initialize agent workspace recording layer"
 | §4 [Memory] | → MEMORY.md |
 | Environment Self-Healing Log | → AGENTS.md Environment Self-Healing Log |
 
-Then rewrite SOUL.md with the new 4-section structure focused on personality:
+Then rewrite SOUL.md with the new 5-section structure focused on personality:
 1. Role → inner essence (not job title)
 2. Core Personality → 3-5 character traits
 3. Values & Principles → decision-making compass
 4. Communication Habits → interaction patterns
+5. Memory Management → write discipline, triggers, recall habits
 
 > **Backward compatibility**: The bootstrap mechanism does not parse section headings, so old-format SOUL.md files continue to work. Migration improves clarity and enables the motivation-action chain.
 
@@ -265,7 +266,7 @@ workspace integrity and align with current best practices.
 ## Steps
 
 ### 1. Detect — Verify Workspace Structure
-- Confirm SOUL.md exists and uses the 4-section personality format
+- Confirm SOUL.md exists and uses the 5-section personality format
 - Confirm AGENTS.md exists with Runtime Context (§1)
 - List all bootstrap files present; flag any missing Recommended files
 
@@ -275,7 +276,7 @@ workspace integrity and align with current best practices.
 - Flag any stale or incorrect entries
 
 ### 3. Check — SOUL.md Format Compliance
-- Verify 4-section structure: Role / Core Personality / Values & Principles / Communication Habits
+- Verify 5-section structure: Role / Core Personality / Values & Principles / Communication Habits / Memory Management
 - Flag any misplaced content (environment info, operational constraints, memory entries)
 - If legacy format detected, recommend Pattern 10 migration
 
